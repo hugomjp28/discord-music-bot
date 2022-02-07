@@ -7,9 +7,9 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import javax.security.auth.login.LoginException;
 
 public class Main {
-    private final static String TOKEN = "ODkyNDY3NTQyOTYxMDQ1NjE3.YVNVKw.oTpfs-Bh6u1jmrWnMgF8VE09Ato";
     public static void main(String[] args) throws LoginException {
-        JDABuilder builder = JDABuilder.createDefault(TOKEN);
+
+        JDABuilder builder = JDABuilder.createDefault(args[0]);
         // Disable parts of the cache
         builder.disableCache(CacheFlag.MEMBER_OVERRIDES);
         // Enable the bulk delete event
