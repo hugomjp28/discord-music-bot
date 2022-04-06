@@ -4,6 +4,7 @@ YoutubeAudioManager.java
  YoutubeAudioManager
  YoutubeAudioManager$1
  YoutubeAudioManager$2
+ YoutubeAudioManager$3
 Listener.java
  Listener
 Main.java

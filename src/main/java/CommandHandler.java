@@ -95,7 +95,11 @@ public class CommandHandler {
             } else {
                 handleResponse(event,"Not Supported");
             }
-        } else {
+        }
+        else if(song.contains("soundcloud.com")) {
+            youtube.playSoundcloud(song,event);
+        }
+        else {
             youtube.play(song, event);
         }
     }

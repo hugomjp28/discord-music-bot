@@ -103,6 +103,33 @@ public class YoutubeAudioManager {
         });
     }
 
+    public void playSoundcloud(String identifier, MessageReceivedEvent event){
+        playerManager.loadItem(identifier, new AudioLoadResultHandler() {
+            @Override
+            public void trackLoaded(AudioTrack track) {
+                trackScheduler.queue(track, youtube);
+                event.getChannel().sendMessage(track.getInfo().title + " added to queue.").queue();
+            }
+
+            @Override
+            public void playlistLoaded(AudioPlaylist playlist) {
+
+            }
+
+            @Override
+            public void noMatches() {
+                System.out.println("no match");
+                event.getChannel().sendMessage("No matches found.").queue();
+            }
+
+            @Override
+            public void loadFailed(FriendlyException exception) {
+                System.out.println("load failed");
+                event.getChannel().sendMessage("Failed to load track.").queue();
+            }
+        });
+    }
+
     public void clean(MessageReceivedEvent event){
         stop(event);
     }
