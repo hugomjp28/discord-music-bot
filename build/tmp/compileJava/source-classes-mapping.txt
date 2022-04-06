@@ -15,5 +15,3 @@ CommandHandler.java
  CommandHandler
 SpotifyAPI.java
  SpotifyAPI
-FileAudioManager.java
- FileAudioManager

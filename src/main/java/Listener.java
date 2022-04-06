@@ -86,6 +86,9 @@ public class Listener extends ListenerAdapter {
                         CommandHandler.handleResponse(event, "Which song to remove?");
                     }
                     break;
+                case("loop") :
+                    CommandHandler.handleLoop(event);
+                    break;
                 case("dc") :
                     CommandHandler.handleDisconnect(event);
                     break;

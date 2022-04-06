@@ -12,6 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class TrackScheduler extends AudioEventAdapter {
     private final BlockingQueue<AudioTrack> queue;
+    private boolean loop = false;
     private final AudioPlayer player;
 
     public TrackScheduler(AudioPlayer player) {
@@ -38,7 +39,10 @@ public class TrackScheduler extends AudioEventAdapter {
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason.mayStartNext) {
             // Start next track
-            if(!queue.isEmpty()) {
+            if(loop) {
+                player.startTrack(track.makeClone(), false);
+            }
+            else if(!queue.isEmpty()) {
                 player.startTrack(queue.poll(), false);
             } else {
                 player.startTrack(null, true);
@@ -164,5 +168,10 @@ public class TrackScheduler extends AudioEventAdapter {
             return;
         }
         event.getChannel().sendMessage("Queue is empty or invalid number.").queue();
+    }
+
+    public void setLoop(MessageReceivedEvent event){
+        loop = !loop;
+        event.getChannel().sendMessage("Looping is " + (loop ? "on" : "off")).queue();
     }
 }
