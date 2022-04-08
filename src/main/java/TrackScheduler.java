@@ -104,9 +104,7 @@ public class TrackScheduler extends AudioEventAdapter {
         Object[] aux = queue.toArray();
         for (int i = 0; i < aux.length && i <= 9; i++) {
             AudioTrack track = (AudioTrack) aux[i];
-            response.append((i + 1) + " - " + track.getInfo().title)
-                    .append(" " + (track.getDuration() / 1000) / 60 + ":" +
-                            String.format("%02d", (track.getDuration() / 1000) % 60) + "\n");
+            response.append((i + 1) + " - " + track.getInfo().title + "\n");
         }
         if(queue.size() > 10) {
             response.append("...");
