@@ -45,7 +45,7 @@ public class CommandHandler {
                 handleResponse(event,"Not Supported");
             }
         }
-        else if(song.contains("soundcloud.com")) {
+        else if(song.contains("soundcloud")) {
             youtube.playSoundcloud(song,event);
         }
         else {
