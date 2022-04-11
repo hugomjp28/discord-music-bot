@@ -63,7 +63,9 @@ public class YoutubeAudioManager {
             @Override
             public void loadFailed(FriendlyException exception) {
                 System.out.println("load failed");
-                event.getChannel().sendMessage("Failed to load track.").queue();
+                if(!isSpotify) {
+                    event.getChannel().sendMessage("Failed to load track.").queue();
+                }
             }
         });
     }

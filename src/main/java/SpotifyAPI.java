@@ -1,14 +1,16 @@
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.wrapper.spotify.SpotifyApi;
+import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
-import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
-import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
-import com.wrapper.spotify.model_objects.specification.Track;
-import com.wrapper.spotify.model_objects.specification.TrackSimplified;
+import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import com.wrapper.spotify.requests.data.albums.GetAlbumsTracksRequest;
 import com.wrapper.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 import com.wrapper.spotify.requests.data.tracks.GetTrackRequest;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.apache.hc.core5.http.ParseException;
+
+import java.io.IOException;
 
 public class SpotifyAPI {
     public SpotifyApi spotifyApi;
@@ -70,12 +72,11 @@ public class SpotifyAPI {
         try {
             PlaylistTrack[] playlistTracks = getPlaylistsItemsRequest.execute().getItems();
             for (PlaylistTrack playlistTrack : playlistTracks) {
-                getTrack(playlistTrack.getTrack().getId(),youtube,event,false);
+                if(playlistTrack.getTrack() != null) getTrack(playlistTrack.getTrack().getId(),youtube,event,false);
             }
             event.getChannel().sendMessage(playlistTracks.length + " songs added to queue.").queue();
         }catch (Exception e) {
             refreshCredentials();
-            getPlaylist(uri,youtube,event);
         }
     }
 
