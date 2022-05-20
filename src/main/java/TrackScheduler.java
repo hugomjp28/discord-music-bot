@@ -107,8 +107,9 @@ public class TrackScheduler extends AudioEventAdapter {
             response.append((i + 1) + " - " + track.getInfo().title + "\n");
         }
         if(queue.size() > 10) {
-            response.append("...");
+            response.append("...\n");
         }
+        response.append("Songs in queue: " + queue.size() + "\n");
         String toSend = response.toString();
         event.getChannel().sendMessage(toSend).queue();
     }

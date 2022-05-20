@@ -70,11 +70,30 @@ public class SpotifyAPI {
                 .getPlaylistsItems(uri)
                 .build();
         try {
-            PlaylistTrack[] playlistTracks = getPlaylistsItemsRequest.execute().getItems();
+            Paging<PlaylistTrack> execute = getPlaylistsItemsRequest.execute();
+            String next = execute.getNext();
+            int total = 0;
+            int i = 0;
+            while (next != null) {
+                next = execute.getNext();
+                PlaylistTrack[] playlistTracks = execute.getItems();
+                for (PlaylistTrack playlistTrack : playlistTracks) {
+                    if(playlistTrack.getTrack() != null) getTrack(playlistTrack.getTrack().getId(),youtube,event,false);
+                }
+                total += playlistTracks.length;
+                i+= 100;
+                GetPlaylistsItemsRequest getting = spotifyApi
+                        .getPlaylistsItems(uri)
+                        .offset(i)
+                        .build();
+                execute = getting.execute();
+            }
+            event.getChannel().sendMessage(total + " songs added to queue.").queue();
+            /*PlaylistTrack[] playlistTracks = getPlaylistsItemsRequest.execute().getItems();
             for (PlaylistTrack playlistTrack : playlistTracks) {
                 if(playlistTrack.getTrack() != null) getTrack(playlistTrack.getTrack().getId(),youtube,event,false);
             }
-            event.getChannel().sendMessage(playlistTracks.length + " songs added to queue.").queue();
+            event.getChannel().sendMessage(playlistTracks.length + " songs added to queue.").queue();*/
         }catch (Exception e) {
             refreshCredentials();
         }
