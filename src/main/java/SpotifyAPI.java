@@ -1,6 +1,4 @@
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.wrapper.spotify.SpotifyApi;
-import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
@@ -8,9 +6,8 @@ import com.wrapper.spotify.requests.data.albums.GetAlbumsTracksRequest;
 import com.wrapper.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 import com.wrapper.spotify.requests.data.tracks.GetTrackRequest;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.apache.hc.core5.http.ParseException;
 
-import java.io.IOException;
+import java.util.concurrent.FutureTask;
 
 public class SpotifyAPI {
     public SpotifyApi spotifyApi;
@@ -71,15 +68,20 @@ public class SpotifyAPI {
                 .build();
         try {
             Paging<PlaylistTrack> execute = getPlaylistsItemsRequest.execute();
-            String next = execute.getNext();
+            String next = "start";
             int total = 0;
             int i = 0;
             while (next != null) {
                 next = execute.getNext();
                 PlaylistTrack[] playlistTracks = execute.getItems();
-                for (PlaylistTrack playlistTrack : playlistTracks) {
-                    if(playlistTrack.getTrack() != null) getTrack(playlistTrack.getTrack().getId(),youtube,event,false);
+                FutureTask<Integer> task = new FutureTask<>(()->{
+                    for (PlaylistTrack playlistTrack : playlistTracks) {
+                        if(playlistTrack.getTrack() != null) getTrack(playlistTrack.getTrack().getId(),youtube,event,false);
+                    }
+                    return 0;
                 }
+                );
+                task.run();
                 total += playlistTracks.length;
                 i+= 100;
                 GetPlaylistsItemsRequest getting = spotifyApi
@@ -89,11 +91,6 @@ public class SpotifyAPI {
                 execute = getting.execute();
             }
             event.getChannel().sendMessage(total + " songs added to queue.").queue();
-            /*PlaylistTrack[] playlistTracks = getPlaylistsItemsRequest.execute().getItems();
-            for (PlaylistTrack playlistTrack : playlistTracks) {
-                if(playlistTrack.getTrack() != null) getTrack(playlistTrack.getTrack().getId(),youtube,event,false);
-            }
-            event.getChannel().sendMessage(playlistTracks.length + " songs added to queue.").queue();*/
         }catch (Exception e) {
             refreshCredentials();
         }
