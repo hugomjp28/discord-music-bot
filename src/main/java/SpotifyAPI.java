@@ -7,7 +7,7 @@ import com.wrapper.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 import com.wrapper.spotify.requests.data.tracks.GetTrackRequest;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.CompletableFuture;
 
 public class SpotifyAPI {
     public SpotifyApi spotifyApi;
@@ -74,14 +74,11 @@ public class SpotifyAPI {
             while (next != null) {
                 next = execute.getNext();
                 PlaylistTrack[] playlistTracks = execute.getItems();
-                FutureTask<Integer> task = new FutureTask<>(()->{
+                CompletableFuture.runAsync(()->{
                     for (PlaylistTrack playlistTrack : playlistTracks) {
                         if(playlistTrack.getTrack() != null) getTrack(playlistTrack.getTrack().getId(),youtube,event,false);
                     }
-                    return 0;
-                }
-                );
-                task.run();
+                });
                 total += playlistTracks.length;
                 i+= 100;
                 GetPlaylistsItemsRequest getting = spotifyApi
