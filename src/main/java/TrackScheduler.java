@@ -37,18 +37,11 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        if (endReason.mayStartNext) {
-            // Start next track
-            if(loop) {
-                player.startTrack(track.makeClone(), false);
-            }
-            else if(!queue.isEmpty()) {
-                player.startTrack(queue.poll(), false);
-            } else {
-                player.startTrack(null, true);
-            }
+        if (loop) {
+            player.startTrack(track.makeClone(), false);
+        } else if (!queue.isEmpty()) {
+            player.startTrack(queue.poll(), false);
         } else {
-            //do nothing?
             player.startTrack(null, true);
         }
 
@@ -64,6 +57,7 @@ public class TrackScheduler extends AudioEventAdapter {
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         // Start next track
         System.out.println("exception");
+        System.out.println(exception);
         player.startTrack(queue.poll(), true);
     }
 
@@ -71,6 +65,7 @@ public class TrackScheduler extends AudioEventAdapter {
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
         // Audio track has been unable to provide us any audio, might want to just start a new track
         System.out.println("stuck");
+
         player.startTrack(queue.poll(), true);
     }
 
@@ -140,8 +135,8 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public void stop(MessageReceivedEvent event) {
-        player.stopTrack();
         clearQueue(event);
+        player.stopTrack();
         event.getChannel().sendMessage("Player stopped.").queue();
     }
 
