@@ -55,17 +55,15 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-        // Start next track
-        System.out.println("exception");
+        // Try again?
         System.out.println(exception);
-        player.startTrack(queue.poll(), true);
+        player.startTrack(track, true);
     }
 
     @Override
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
         // Audio track has been unable to provide us any audio, might want to just start a new track
         System.out.println("stuck");
-
         player.startTrack(queue.poll(), true);
     }
 
