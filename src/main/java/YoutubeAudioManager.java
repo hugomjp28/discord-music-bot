@@ -17,7 +17,7 @@ public class YoutubeAudioManager {
         playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager);
         youtube = playerManager.createPlayer();
-        trackScheduler = new TrackScheduler(youtube);
+        trackScheduler = new TrackScheduler(youtube,playerManager);
         youtube.addListener(trackScheduler);
     }
 

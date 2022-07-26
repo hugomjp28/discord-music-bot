@@ -1,6 +1,9 @@
+import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -14,10 +17,12 @@ public class TrackScheduler extends AudioEventAdapter {
     private final BlockingQueue<AudioTrack> queue;
     private boolean loop = false;
     private final AudioPlayer player;
+    private final AudioPlayerManager playerManager;
 
-    public TrackScheduler(AudioPlayer player) {
+    public TrackScheduler(AudioPlayer player, AudioPlayerManager playerManager) {
         this.player = player;
         this.queue = new LinkedBlockingQueue<>();
+        this.playerManager = playerManager;
     }
 
     @Override
@@ -37,10 +42,16 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        if (loop) {
-            player.startTrack(track.makeClone(), false);
-        } else if (!queue.isEmpty()) {
-            player.startTrack(queue.poll(), false);
+        if (endReason.mayStartNext && endReason != AudioTrackEndReason.LOAD_FAILED) {
+            if (loop) {
+                player.startTrack(track.makeClone(), false);
+            } else if (!queue.isEmpty()) {
+                player.startTrack(queue.poll(), false);
+            } else {
+                player.startTrack(null, true);
+            }
+        } else if(endReason == AudioTrackEndReason.LOAD_FAILED) {
+            //do nothing
         } else {
             player.startTrack(null, true);
         }
@@ -55,16 +66,35 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-        // Try again?
-        System.out.println(exception);
-        player.startTrack(track, true);
+        //reloads track
+        playerManager.loadItem(track.getIdentifier(), new AudioLoadResultHandler() {
+            @Override
+            public void trackLoaded(AudioTrack audioTrack) {
+                player.startTrack(audioTrack,false);
+            }
+
+            @Override
+            public void playlistLoaded(AudioPlaylist audioPlaylist) {
+                //do nothing
+            }
+
+            @Override
+            public void noMatches() {
+                //do nothing
+            }
+
+            @Override
+            public void loadFailed(FriendlyException e) {
+                //do nothing
+            }
+        });
     }
 
     @Override
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
         // Audio track has been unable to provide us any audio, might want to just start a new track
         System.out.println("stuck");
-        player.startTrack(queue.poll(), true);
+        nextTrack();
     }
 
     public void queue(AudioTrack audio, AudioPlayer player) {
@@ -92,8 +122,8 @@ public class TrackScheduler extends AudioEventAdapter {
             return;
         }
         response.append("Now playing - " + current.getInfo().title)
-                .append(" " + (current.getDuration() / 1000) / 60 + ":" +
-                        (current.getDuration() / 1000) % 60 + "\n");
+                .append(" " + String.format("%02d",(current.getDuration() / 1000) / 60) + ":" +
+                        String.format("%02d",(current.getDuration() / 1000) % 60) + "\n");
         Object[] aux = queue.toArray();
         for (int i = 0; i < aux.length && i <= 9; i++) {
             AudioTrack track = (AudioTrack) aux[i];
