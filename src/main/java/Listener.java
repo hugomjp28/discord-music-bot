@@ -54,8 +54,6 @@ public class Listener extends ListenerAdapter {
                         }
                         break;
                     case("skip") :
-                        CommandHandler.handleSkip(event, null);
-                        break;
                     case("next") :
                         CommandHandler.handleSkip(event, null);
                         break;

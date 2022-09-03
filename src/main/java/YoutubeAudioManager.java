@@ -8,7 +8,6 @@ import com.sedmelluq.discord.lavaplayer.track.*;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 
 public class YoutubeAudioManager {
     AudioPlayerManager playerManager;
@@ -72,12 +71,12 @@ public class YoutubeAudioManager {
         });
     }
 
-    public void playFile(Message.Attachment file, MessageReceivedEvent event) {
+    public void playFile(Message.Attachment file, MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         playerManager.loadItem(file.getProxyUrl(), new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 trackScheduler.queue(track, youtube);
-                event.getChannel().sendMessage(track.getInfo().title + " added to queue.").queue();
+                CommandHandler.handleResponse(event,slash, track.getInfo().title + " added to queue.");
             }
 
             @Override
@@ -88,13 +87,13 @@ public class YoutubeAudioManager {
             @Override
             public void noMatches() {
                 System.out.println("no match");
-                event.getChannel().sendMessage("No matches found.").queue();
+                CommandHandler.handleResponse(event,slash,"No matches found.");
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
                 System.out.println("load failed");
-                event.getChannel().sendMessage("Failed to load track.").queue();
+                CommandHandler.handleResponse(event,slash,"Failed to load track.");
             }
         });
     }
@@ -126,45 +125,48 @@ public class YoutubeAudioManager {
         });
     }
 
-    public void clean(MessageReceivedEvent event){
-        stop(event);
+    public void clean(MessageReceivedEvent event, SlashCommandInteractionEvent slash){
+        stop(event, slash);
     }
 
-    public void skip(MessageReceivedEvent event) {
+    public void skip(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         if(trackScheduler.nextTrack()){
-            event.getChannel().sendMessage("Now playing: " + youtube.getPlayingTrack().getInfo().title).queue();
+            CommandHandler.handleResponse(event, slash,
+                    "Now playing: " + youtube.getPlayingTrack().getInfo().title);
+        } else {
+            CommandHandler.handleResponse(event,slash,"Skipped.");
         }
     }
 
-    public void showQueue(MessageReceivedEvent event) {
-        trackScheduler.showQueue(event);
+    public void showQueue(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        trackScheduler.showQueue(event,slash);
     }
 
-    public void clearQueue(MessageReceivedEvent event) {
-        trackScheduler.clearQueue(event);
+    public void clearQueue(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        trackScheduler.clearQueue(event, slash);
     }
 
-    public void pause(MessageReceivedEvent event) {
-        trackScheduler.pause(event);
+    public void pause(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        trackScheduler.pause(event, slash);
     }
 
-    public void resume(MessageReceivedEvent event) {
-        trackScheduler.resume(event);
+    public void resume(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        trackScheduler.resume(event, slash);
     }
 
-    public void stop(MessageReceivedEvent event) {
-        trackScheduler.stop(event);
+    public void stop(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        trackScheduler.stop(event, slash);
     }
 
-    public void shuffle(MessageReceivedEvent event) {
-        trackScheduler.shuffle(event);
+    public void shuffle(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        trackScheduler.shuffle(event, slash);
     }
 
-    public void remove(MessageReceivedEvent event, int song) {
-        trackScheduler.remove(event, song);
+    public void remove(MessageReceivedEvent event, SlashCommandInteractionEvent slash, int song) {
+        trackScheduler.remove(event, slash, song);
     }
 
-    public void loop(MessageReceivedEvent event) {
-        trackScheduler.setLoop(event);
+    public void loop(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        trackScheduler.setLoop(event, slash);
     }
 }

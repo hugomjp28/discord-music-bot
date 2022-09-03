@@ -6,6 +6,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.Collections;
@@ -114,11 +115,11 @@ public class TrackScheduler extends AudioEventAdapter {
         }
     }
 
-    public void showQueue(MessageReceivedEvent event) {
+    public void showQueue(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         StringBuilder response = new StringBuilder();
         AudioTrack current = player.getPlayingTrack();
         if(current == null) {
-            event.getChannel().sendMessage("Queue is empty.").queue();
+            CommandHandler.handleResponse(event, slash, "Queue is empty.");
             return;
         }
         response.append("Now playing - " + current.getInfo().title)
@@ -134,66 +135,66 @@ public class TrackScheduler extends AudioEventAdapter {
         }
         response.append("Songs in queue: " + queue.size() + "\n");
         String toSend = response.toString();
-        event.getChannel().sendMessage(toSend).queue();
+        CommandHandler.handleResponse(event,slash,toSend);
     }
 
-    public void clearQueue(MessageReceivedEvent event) {
+    public void clearQueue(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         if(!queue.isEmpty()) {
             queue.clear();
         }
-        event.getChannel().sendMessage("Cleared Queue.").queue();
+        CommandHandler.handleResponse(event,slash,"Cleared Queue.");
     }
 
-    public void pause(MessageReceivedEvent event) {
+    public void pause(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         if(!player.isPaused()){
             player.setPaused(true);
-            event.getChannel().sendMessage("Pausing.").queue();
+            CommandHandler.handleResponse(event,slash,"Pausing.");
         } else {
-            event.getChannel().sendMessage("Player is already paused.").queue();
+            CommandHandler.handleResponse(event,slash,"Player is already paused.");
         }
     }
 
-    public void resume(MessageReceivedEvent event) {
+    public void resume(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         if(player.isPaused()){
             player.setPaused(false);
-            event.getChannel().sendMessage("Resuming.").queue();
+            CommandHandler.handleResponse(event,slash,"Resuming.");
         } else {
-            event.getChannel().sendMessage("Player is already playing.").queue();
+            CommandHandler.handleResponse(event,slash,"Player is already playing.");
         }
     }
 
-    public void stop(MessageReceivedEvent event) {
-        clearQueue(event);
+    public void stop(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        clearQueue(event, slash);
         player.stopTrack();
-        event.getChannel().sendMessage("Player stopped.").queue();
+        CommandHandler.handleResponse(event,slash,"Player stopped.");
     }
 
-    public void shuffle(MessageReceivedEvent event) {
+    public void shuffle(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         if(!queue.isEmpty()) {
             LinkedList<AudioTrack> aux = new LinkedList<>();
             queue.drainTo(aux);
             Collections.shuffle(aux);
             queue.addAll(aux);
-            event.getChannel().sendMessage("Playlist Shuffled.").queue();
+            CommandHandler.handleResponse(event,slash,"Playlist Shuffled.");
             return;
         }
-        event.getChannel().sendMessage("No tracks in queue.").queue();
+        CommandHandler.handleResponse(event,slash,"No tracks in queue.");
     }
 
-    public void remove(MessageReceivedEvent event, int song) {
+    public void remove(MessageReceivedEvent event, SlashCommandInteractionEvent slash, int song) {
         if(!queue.isEmpty() && song <= queue.size()) {
             LinkedList<AudioTrack> aux = new LinkedList<>();
             queue.drainTo(aux);
-            aux.remove(song-1);
+            AudioTrack removed = aux.remove(song - 1);
             queue.addAll(aux);
-            event.getChannel().sendMessage("Removed song from queue.").queue();
+            CommandHandler.handleResponse(event,slash,"Removed \"" + removed.getInfo().title + "\" from queue.");
             return;
         }
-        event.getChannel().sendMessage("Queue is empty or invalid number.").queue();
+        CommandHandler.handleResponse(event,slash,"Queue is empty or invalid number.");
     }
 
-    public void setLoop(MessageReceivedEvent event){
+    public void setLoop(MessageReceivedEvent event, SlashCommandInteractionEvent slash){
         loop = !loop;
-        event.getChannel().sendMessage("Looping is " + (loop ? "on" : "off")).queue();
+        CommandHandler.handleResponse(event,slash,"Looping is " + (loop ? "on" : "off"));
     }
 }

@@ -79,13 +79,12 @@ public class CommandHandler {
         }
     }
 
-    //TODO support for slashcommands for every of the ones below
     public static void handleFile(MessageReceivedEvent event, SlashCommandInteractionEvent slash, Message.Attachment attachment) {
         AudioChannel connectedChannel = getAudioChannel(event, slash);
         if (connectedChannel == null) return;
         YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
         if (getGuildAudioManager(event, slash, connectedChannel, youtube) == null) return;
-        youtube.playFile(attachment,event);
+        youtube.playFile(attachment,event, slash);
     }
 
     public static void handleDisconnect(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
@@ -95,7 +94,7 @@ public class CommandHandler {
         AudioManager audioManager = getGuildAudioManager(event, slash, connectedChannel, youtube);
         if(audioManager == null) return;
         // Connects to the channel.
-        youtube.clean(event);
+        youtube.clean(event,slash);
         audioManager.closeAudioConnection();
         handleResponse(event,slash,"Bot disconnected!");
     }
@@ -104,42 +103,42 @@ public class CommandHandler {
         AudioChannel connectedChannel = getAudioChannel(event, slash);
         if (connectedChannel == null) return;
         YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
-        youtube.skip(event);
+        youtube.skip(event,slash);
     }
 
     public static void handleQueue(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         AudioChannel connectedChannel = getAudioChannel(event, slash);
         if (connectedChannel == null) return;
         YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
-        youtube.showQueue(event);
+        youtube.showQueue(event,slash);
     }
 
     public static void handleClear(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         AudioChannel connectedChannel = getAudioChannel(event, slash);
         if (connectedChannel == null) return;
         YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
-        youtube.clearQueue(event);
+        youtube.clearQueue(event, slash);
     }
 
     public static void handlePause(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         AudioChannel connectedChannel = getAudioChannel(event, slash);
         if (connectedChannel == null) return;
         YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
-        youtube.pause(event);
+        youtube.pause(event, slash);
     }
 
     public static void handleResume(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         AudioChannel connectedChannel = getAudioChannel(event, slash);
         if (connectedChannel == null) return;
         YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
-        youtube.resume(event);
+        youtube.resume(event, slash);
     }
 
     public static void handleStop(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         AudioChannel connectedChannel = getAudioChannel(event, slash);
         if (connectedChannel == null) return;
         YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
-        youtube.stop(event);
+        youtube.stop(event,slash);
     }
 
     public static void handleShuffle(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
@@ -147,7 +146,7 @@ public class CommandHandler {
         if (connectedChannel == null) return;
         YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
         if (getGuildAudioManager(event, slash, connectedChannel, youtube) == null) return;
-        youtube.shuffle(event);
+        youtube.shuffle(event, slash);
     }
 
     public static void handleRemove(MessageReceivedEvent event, SlashCommandInteractionEvent slash, String toRemove) {
@@ -165,13 +164,13 @@ public class CommandHandler {
         if (connectedChannel == null) return;
         YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
         if (getGuildAudioManager(event, slash, connectedChannel, youtube) == null) return;
-        youtube.remove(event, song);
+        youtube.remove(event, slash, song);
     }
 
     public static void handleLoop(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         AudioChannel connectedChannel = getAudioChannel(event, slash);
         if (connectedChannel == null) return;
         YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
-        youtube.loop(event);
+        youtube.loop(event, slash);
     }
 }
