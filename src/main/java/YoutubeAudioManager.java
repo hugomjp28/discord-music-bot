@@ -6,7 +6,9 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.*;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 
 public class YoutubeAudioManager {
     AudioPlayerManager playerManager;
@@ -21,7 +23,7 @@ public class YoutubeAudioManager {
         youtube.addListener(trackScheduler);
     }
 
-    public void play(String identifier, MessageReceivedEvent event, boolean isSpotify){
+    public void play(String identifier, MessageReceivedEvent event, SlashCommandInteractionEvent slash, boolean isSpotify){
         String song;
         if(!identifier.split("/")[0].contains("https")) {
             song = "ytsearch:" + identifier;
@@ -33,7 +35,7 @@ public class YoutubeAudioManager {
             public void trackLoaded(AudioTrack track) {
                 trackScheduler.queue(track, youtube);
                 if(!isSpotify) {
-                    event.getChannel().sendMessage(track.getInfo().title + " added to queue.").queue();
+                    CommandHandler.handleResponse(event, slash,track.getInfo().title + " added to queue.");
                 }
             }
 
@@ -42,29 +44,29 @@ public class YoutubeAudioManager {
                 if(song.contains("ytsearch:")) {
                     trackScheduler.queue(playlist.getTracks().get(0), youtube);
                     if(!isSpotify) {
-                        event.getChannel().sendMessage(playlist.getTracks().get(0).getInfo().title + " added to queue.")
-                                .queue();
+                        CommandHandler.handleResponse(event,slash,
+                                playlist.getTracks().get(0).getInfo().title + " added to queue.");
                     }
                 } else {
                     for(AudioTrack track : playlist.getTracks()) {
                         trackScheduler.queue(track,youtube);
                     }
-                    event.getChannel().sendMessage(playlist.getTracks().size() + " tracks added to queue.")
-                            .queue();
+                    CommandHandler.handleResponse(event,slash,
+                            playlist.getTracks().size() + " tracks added to queue.");
                 }
             }
 
             @Override
             public void noMatches() {
                 System.out.println("no match");
-                event.getChannel().sendMessage("No matches found.").queue();
+                CommandHandler.handleResponse(event,slash,"No matches found.");
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
                 System.out.println("load failed");
                 if(!isSpotify) {
-                    event.getChannel().sendMessage("Failed to load track.").queue();
+                    CommandHandler.handleResponse(event,slash,"Failed to load track.");
                 }
             }
         });
@@ -97,12 +99,12 @@ public class YoutubeAudioManager {
         });
     }
 
-    public void playSoundcloud(String identifier, MessageReceivedEvent event){
+    public void playSoundcloud(String identifier, MessageReceivedEvent event, SlashCommandInteractionEvent slash){
         playerManager.loadItem(identifier, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 trackScheduler.queue(track, youtube);
-                event.getChannel().sendMessage(track.getInfo().title + " added to queue.").queue();
+                CommandHandler.handleResponse(event,slash,track.getInfo().title + " added to queue.");
             }
 
             @Override
@@ -113,13 +115,13 @@ public class YoutubeAudioManager {
             @Override
             public void noMatches() {
                 System.out.println("no match");
-                event.getChannel().sendMessage("No matches found.").queue();
+                CommandHandler.handleResponse(event,slash,"No matches found.");
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
                 System.out.println("load failed");
-                event.getChannel().sendMessage("Failed to load track.").queue();
+                CommandHandler.handleResponse(event,slash,"Failed to load track.");
             }
         });
     }

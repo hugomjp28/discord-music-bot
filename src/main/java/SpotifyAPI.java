@@ -5,6 +5,7 @@ import com.wrapper.spotify.requests.authorization.client_credentials.ClientCrede
 import com.wrapper.spotify.requests.data.albums.GetAlbumsTracksRequest;
 import com.wrapper.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 import com.wrapper.spotify.requests.data.tracks.GetTrackRequest;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.concurrent.CompletableFuture;
@@ -44,7 +45,8 @@ public class SpotifyAPI {
         }
     }
 
-    public void getTrack(String uri, YoutubeAudioManager youtube, MessageReceivedEvent event, boolean print) {
+    public void getTrack(String uri, YoutubeAudioManager youtube, MessageReceivedEvent event,
+                         SlashCommandInteractionEvent slash, boolean print) {
         GetTrackRequest getTrackRequest = spotifyApi.getTrack(uri).build();
         try{
             Track track = getTrackRequest.execute();
@@ -52,17 +54,19 @@ public class SpotifyAPI {
             for(ArtistSimplified artist : track.getArtists()) {
                 toSearch.append(" ").append(artist.getName());
             }
-            youtube.play(toSearch.toString(),event, true);
+            youtube.play(toSearch.toString(),event, slash,true);
             if(print) {
-                event.getChannel().sendMessage(track.getName() + " added to queue.").queue();
+                CommandHandler.handleResponse(event,slash,track.getName() + " added to queue.");
             }
         } catch (Exception e) {
             refreshCredentials();
-            getTrack(uri,youtube,event,print);
+            getTrack(uri,youtube,event,slash,print);
         }
     }
 
-    public void getPlaylist(String uri, YoutubeAudioManager youtube, MessageReceivedEvent event) {
+    public void getPlaylist(String uri, YoutubeAudioManager youtube,
+                            MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        refreshCredentials();
         GetPlaylistsItemsRequest getPlaylistsItemsRequest = spotifyApi
                 .getPlaylistsItems(uri)
                 .build();
@@ -76,7 +80,7 @@ public class SpotifyAPI {
                 PlaylistTrack[] playlistTracks = execute.getItems();
                 CompletableFuture.runAsync(()->{
                     for (PlaylistTrack playlistTrack : playlistTracks) {
-                        if(playlistTrack.getTrack() != null) getTrack(playlistTrack.getTrack().getId(),youtube,event,false);
+                        if(playlistTrack.getTrack() != null) getTrack(playlistTrack.getTrack().getId(),youtube,event,slash,false);
                     }
                 });
                 total += playlistTracks.length;
@@ -87,13 +91,15 @@ public class SpotifyAPI {
                         .build();
                 execute = getting.execute();
             }
-            event.getChannel().sendMessage(total + " songs added to queue.").queue();
+            CommandHandler.handleResponse(event,slash,total + " songs added to queue.");
         }catch (Exception e) {
             refreshCredentials();
+            CommandHandler.handleResponse(event,slash,"An error occured, please try again!");
         }
     }
 
-    public void getAlbum(String uri, YoutubeAudioManager youtube, MessageReceivedEvent event){
+    public void getAlbum(String uri, YoutubeAudioManager youtube,
+                         MessageReceivedEvent event, SlashCommandInteractionEvent slash){
         GetAlbumsTracksRequest getAlbumItemsRequest = spotifyApi
                 .getAlbumsTracks(uri)
                 .build();
@@ -104,12 +110,12 @@ public class SpotifyAPI {
                 for (ArtistSimplified artist : albumTrack.getArtists()) {
                     toSearch.append(" ").append(artist.getName());
                 }
-                youtube.play(toSearch.toString(), event, true);
+                youtube.play(toSearch.toString(), event, slash,true);
             }
-            event.getChannel().sendMessage(albumTracks.length + " songs added to queue.").queue();
+            CommandHandler.handleResponse(event,slash,albumTracks.length + " songs added to queue.");
         } catch (Exception e) {
             refreshCredentials();
-            getAlbum(uri,youtube,event);
+            getAlbum(uri,youtube,event,slash);
         }
     }
 }

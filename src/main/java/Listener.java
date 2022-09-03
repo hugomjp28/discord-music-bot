@@ -30,17 +30,13 @@ public class Listener extends ListenerAdapter {
             if(messagePrefix == prefix) {
                 switch(divided[0].toLowerCase()){
                     case("ping") :
-                        CommandHandler.handleResponse(event,"PONG");
-                        break;
-                    case("prefix") :
-                        this.prefix = divided[1].charAt(0);
-                        CommandHandler.handleResponse(event,"Prefix changed to " + prefix);
+                        CommandHandler.handleResponse(event,null,"PONG!");
                         break;
                     case("play") :
                         if(divided.length >= 2) {
-                            CommandHandler.handlePlay(event, message.substring(5));
+                            CommandHandler.handlePlay(event, null,message.substring(5));
                         } else {
-                            CommandHandler.handleResponse(event, "No song detected.");
+                            CommandHandler.handleResponse(event, null,"You must tell me what to play!");
                         }
                         break;
                     case("file") :
@@ -49,50 +45,50 @@ public class Listener extends ListenerAdapter {
                             String fileExtension = attachments.get(0).getFileExtension();
                             assert fileExtension != null;
                             if(fileExtension.equals("mp3") || fileExtension.equals("wav") || fileExtension.equals("ogg")) {
-                                CommandHandler.handleFile(event, attachments.get(0));
+                                CommandHandler.handleFile(event, null, attachments.get(0));
                             } else {
-                                CommandHandler.handleResponse(event, "No valid file attached.");
+                                CommandHandler.handleResponse(event, null,"No valid file attached.");
                             }
                         } else {
-                            CommandHandler.handleResponse(event, "No file attached.");
+                            CommandHandler.handleResponse(event, null,"No file attached.");
                         }
                         break;
                     case("skip") :
-                        CommandHandler.handleSkip(event);
+                        CommandHandler.handleSkip(event, null);
                         break;
                     case("next") :
-                        CommandHandler.handleSkip(event);
+                        CommandHandler.handleSkip(event, null);
                         break;
                     case("pause") :
-                        CommandHandler.handlePause(event);
+                        CommandHandler.handlePause(event, null);
                         break;
                     case("resume") :
-                        CommandHandler.handleResume(event);
+                        CommandHandler.handleResume(event, null);
                         break;
                     case("stop") :
-                        CommandHandler.handleStop(event);
+                        CommandHandler.handleStop(event, null);
                         break;
                     case("queue") :
-                        CommandHandler.handleQueue(event);
+                        CommandHandler.handleQueue(event, null);
                         break;
                     case("clear"):
-                        CommandHandler.handleClear(event);
+                        CommandHandler.handleClear(event, null);
                         break;
                     case("shuffle"):
-                        CommandHandler.handleShuffle(event);
+                        CommandHandler.handleShuffle(event, null);
                         break;
                     case("remove") :
                         if(divided.length >= 2) {
-                            CommandHandler.handleRemove(event, message.substring(7));
+                            CommandHandler.handleRemove(event, null, message.substring(7));
                         } else {
-                            CommandHandler.handleResponse(event, "Which song to remove?");
+                            CommandHandler.handleResponse(event, null,"Which song to remove?");
                         }
                         break;
                     case("loop") :
-                        CommandHandler.handleLoop(event);
+                        CommandHandler.handleLoop(event, null);
                         break;
                     case("dc") :
-                        CommandHandler.handleDisconnect(event);
+                        CommandHandler.handleDisconnect(event, null);
                         break;
                 }
             }

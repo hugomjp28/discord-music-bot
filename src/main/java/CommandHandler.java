@@ -1,7 +1,9 @@
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.AudioChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,225 +12,166 @@ public class CommandHandler {
     private static final SpotifyAPI spotifyApi = new SpotifyAPI();
     private static final Map<String,YoutubeAudioManager> audioManagers = new HashMap<>();
 
-    public static void handleResponse(MessageReceivedEvent event, String response) {
-        event.getChannel().sendMessage(response).queue();
-    }
-
-    public static void handlePlay(MessageReceivedEvent event, String song) {
-        VoiceChannel connectedChannel = event.getMember().getVoiceState().getChannel();
-        if(connectedChannel == null) {
-            handleResponse(event,"You are not in a voice channel!");
-            return;
-        }
-        if(!audioManagers.containsKey(event.getGuild().getId())) {
-            audioManagers.put(event.getGuild().getId(), new YoutubeAudioManager());
-        }
-        YoutubeAudioManager youtube = audioManagers.get(event.getGuild().getId());
-        AudioManager audioManager = event.getGuild().getAudioManager();
+    private static AudioManager getGuildAudioManager(MessageReceivedEvent event, SlashCommandInteractionEvent slash, AudioChannel connectedChannel, YoutubeAudioManager youtube) {
+        AudioManager audioManager = event != null ?
+                event.getGuild().getAudioManager() : slash.getGuild().getAudioManager();
         if(audioManager.isConnected() && !audioManager.getConnectedChannel().equals(connectedChannel)) {
-            handleResponse(event,"The bot is already connected to a voice channel.");
-            return;
-        } else {
+            handleResponse(event, slash,"The bot is already connected to a voice channel.");
+            return null;
+        } else if(!audioManager.isConnected()){
             audioManager.openAudioConnection(connectedChannel);
             audioManager.setSendingHandler(new AudioPlayerSendHandler(youtube.youtube));
         }
+        return audioManager;
+    }
+
+    private static YoutubeAudioManager getYoutubeAudioManager(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        String id = event != null ? event.getGuild().getId() : slash.getGuild().getId();
+        if(!audioManagers.containsKey(id)) {
+            audioManagers.put(id, new YoutubeAudioManager());
+        }
+        return audioManagers.get(id);
+    }
+
+    //checks if you're connected to a voice channel
+    @Nullable
+    private static AudioChannel getAudioChannel(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        AudioChannel connectedChannel = event != null ?
+                event.getMember().getVoiceState().getChannel() : slash.getMember().getVoiceState().getChannel();
+        if(connectedChannel == null) {
+            handleResponse(event, slash,"You are not in a voice channel!");
+            return null;
+        }
+        return connectedChannel;
+    }
+
+    public static void handleResponse(MessageReceivedEvent event, SlashCommandInteractionEvent slash, String response) {
+        if(slash != null) {
+            slash.getHook().editOriginal(response).queue();
+        } else {
+            event.getChannel().sendMessage(response).queue();
+        }
+    }
+
+    public static void handlePlay(MessageReceivedEvent event,SlashCommandInteractionEvent slash, String song) {
+        AudioChannel connectedChannel = getAudioChannel(event, slash);
+        if (connectedChannel == null) return;
+        YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
+        if (getGuildAudioManager(event, slash, connectedChannel, youtube) == null) return;
         if(song.contains("open.spotify.com")) {
             String[] removeQuery = song.split("\\?");
             String[] uriParts = removeQuery[0].split("/");
             if(uriParts[3].compareTo("track") == 0) {
-                spotifyApi.getTrack(uriParts[4], youtube, event, true);
+                spotifyApi.getTrack(uriParts[4], youtube, event, slash,true);
             } else if(uriParts[3].compareTo("playlist") == 0) {
-                spotifyApi.getPlaylist(uriParts[4],youtube,event);
+                spotifyApi.getPlaylist(uriParts[4],youtube,event,slash);
             } else if(uriParts[3].compareTo("album") == 0) {
-                 spotifyApi.getAlbum(uriParts[4],youtube,event);
+                 spotifyApi.getAlbum(uriParts[4],youtube,event,slash);
             } else {
-                handleResponse(event,"Not Supported");
+                handleResponse(event,slash,"Not Supported");
             }
         }
         else if(song.contains("https://soundcloud.com")) {
-            youtube.playSoundcloud(song,event);
+            youtube.playSoundcloud(song,event,slash);
         }
         else {
-            youtube.play(song, event, false);
+            youtube.play(song, event, slash,false);
         }
     }
 
-    public static void handleFile(MessageReceivedEvent event, Message.Attachment attachment) {
-        VoiceChannel connectedChannel = event.getMember().getVoiceState().getChannel();
-        if(connectedChannel == null) {
-            handleResponse(event,"You are not in a voice channel!");
-            return;
-        }
-        if(!audioManagers.containsKey(event.getGuild().getId())) {
-            audioManagers.put(event.getGuild().getId(), new YoutubeAudioManager());
-        }
-        YoutubeAudioManager youtube = audioManagers.get(event.getGuild().getId());
-        AudioManager audioManager = event.getGuild().getAudioManager();
-        if(audioManager.isConnected() && !audioManager.getConnectedChannel().equals(connectedChannel)) {
-            handleResponse(event,"The bot is already connected to a voice channel.");
-            return;
-        } else {
-            audioManager.openAudioConnection(connectedChannel);
-            audioManager.setSendingHandler(new AudioPlayerSendHandler(youtube.youtube));
-        }
+    //TODO support for slashcommands for every of the ones below
+    public static void handleFile(MessageReceivedEvent event, SlashCommandInteractionEvent slash, Message.Attachment attachment) {
+        AudioChannel connectedChannel = getAudioChannel(event, slash);
+        if (connectedChannel == null) return;
+        YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
+        if (getGuildAudioManager(event, slash, connectedChannel, youtube) == null) return;
         youtube.playFile(attachment,event);
     }
 
-    public static void handleDisconnect(MessageReceivedEvent event) {
-        VoiceChannel connectedChannel = event.getMember().getVoiceState().getChannel();
-        if(connectedChannel == null) {
-            handleResponse(event,"You are not in a voice channel!");
-            return;
-        }
-        if(!audioManagers.containsKey(event.getGuild().getId())) {
-            audioManagers.put(event.getGuild().getId(), new YoutubeAudioManager());
-        }
-        YoutubeAudioManager youtube = audioManagers.get(event.getGuild().getId());
-        AudioManager audioManager = event.getGuild().getAudioManager();
-        if(!audioManager.isConnected() && audioManager.getConnectedChannel() != connectedChannel) {
-            handleResponse(event,"The bot is not connected to a voice channel.");
-            return;
-        }
+    public static void handleDisconnect(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        AudioChannel connectedChannel = getAudioChannel(event, slash);
+        if (connectedChannel == null) return;
+        YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
+        AudioManager audioManager = getGuildAudioManager(event, slash, connectedChannel, youtube);
+        if(audioManager == null) return;
         // Connects to the channel.
         youtube.clean(event);
         audioManager.closeAudioConnection();
-        handleResponse(event,"Bot disconnected!");
+        handleResponse(event,slash,"Bot disconnected!");
     }
 
-    public static void handleSkip(MessageReceivedEvent event) {
-        VoiceChannel connectedChannel = event.getMember().getVoiceState().getChannel();
-        if(connectedChannel == null) {
-            handleResponse(event,"You are not in a voice channel!");
-            return;
-        }
-        if(!audioManagers.containsKey(event.getGuild().getId())) {
-            audioManagers.put(event.getGuild().getId(), new YoutubeAudioManager());
-        }
-        YoutubeAudioManager youtube = audioManagers.get(event.getGuild().getId());
+    public static void handleSkip(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        AudioChannel connectedChannel = getAudioChannel(event, slash);
+        if (connectedChannel == null) return;
+        YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
         youtube.skip(event);
     }
 
-    public static void handleQueue(MessageReceivedEvent event) {
-        VoiceChannel connectedChannel = event.getMember().getVoiceState().getChannel();
-        if(connectedChannel == null) {
-            handleResponse(event,"You are not in a voice channel!");
-            return;
-        }
-        if(!audioManagers.containsKey(event.getGuild().getId())) {
-            audioManagers.put(event.getGuild().getId(), new YoutubeAudioManager());
-        }
-        YoutubeAudioManager youtube = audioManagers.get(event.getGuild().getId());
+    public static void handleQueue(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        AudioChannel connectedChannel = getAudioChannel(event, slash);
+        if (connectedChannel == null) return;
+        YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
         youtube.showQueue(event);
     }
 
-    public static void handleClear(MessageReceivedEvent event) {
-        VoiceChannel connectedChannel = event.getMember().getVoiceState().getChannel();
-        if(connectedChannel == null) {
-            handleResponse(event,"You are not in a voice channel!");
-            return;
-        }
-        if(!audioManagers.containsKey(event.getGuild().getId())) {
-            audioManagers.put(event.getGuild().getId(), new YoutubeAudioManager());
-        }
-        YoutubeAudioManager youtube = audioManagers.get(event.getGuild().getId());
+    public static void handleClear(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        AudioChannel connectedChannel = getAudioChannel(event, slash);
+        if (connectedChannel == null) return;
+        YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
         youtube.clearQueue(event);
     }
 
-    public static void handlePause(MessageReceivedEvent event) {
-        VoiceChannel connectedChannel = event.getMember().getVoiceState().getChannel();
-        if(connectedChannel == null) {
-            handleResponse(event,"You are not in a voice channel!");
-            return;
-        }
-        if(!audioManagers.containsKey(event.getGuild().getId())) {
-            audioManagers.put(event.getGuild().getId(), new YoutubeAudioManager());
-        }
-        YoutubeAudioManager youtube = audioManagers.get(event.getGuild().getId());
+    public static void handlePause(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        AudioChannel connectedChannel = getAudioChannel(event, slash);
+        if (connectedChannel == null) return;
+        YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
         youtube.pause(event);
     }
 
-    public static void handleResume(MessageReceivedEvent event) {
-        VoiceChannel connectedChannel = event.getMember().getVoiceState().getChannel();
-        if(connectedChannel == null) {
-            handleResponse(event,"You are not in a voice channel!");
-            return;
-        }
-        if(!audioManagers.containsKey(event.getGuild().getId())) {
-            audioManagers.put(event.getGuild().getId(), new YoutubeAudioManager());
-        }
-        YoutubeAudioManager youtube = audioManagers.get(event.getGuild().getId());
+    public static void handleResume(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        AudioChannel connectedChannel = getAudioChannel(event, slash);
+        if (connectedChannel == null) return;
+        YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
         youtube.resume(event);
     }
 
-    public static void handleStop(MessageReceivedEvent event) {
-        VoiceChannel connectedChannel = event.getMember().getVoiceState().getChannel();
-        if(connectedChannel == null) {
-            handleResponse(event,"You are not in a voice channel!");
-            return;
-        }
-        if(!audioManagers.containsKey(event.getGuild().getId())) {
-            audioManagers.put(event.getGuild().getId(), new YoutubeAudioManager());
-        }
-        YoutubeAudioManager youtube = audioManagers.get(event.getGuild().getId());
+    public static void handleStop(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        AudioChannel connectedChannel = getAudioChannel(event, slash);
+        if (connectedChannel == null) return;
+        YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
         youtube.stop(event);
     }
 
-    public static void handleShuffle(MessageReceivedEvent event) {
-        VoiceChannel connectedChannel = event.getMember().getVoiceState().getChannel();
-        if(connectedChannel == null) {
-            handleResponse(event,"You are not in a voice channel!");
-            return;
-        }
-        AudioManager audioManager = event.getGuild().getAudioManager();
-        if(!audioManager.isConnected() && audioManager.getConnectedChannel() != connectedChannel) {
-            handleResponse(event,"The bot is not connected to a voice channel.");
-            return;
-        }
-        if(!audioManagers.containsKey(event.getGuild().getId())) {
-            audioManagers.put(event.getGuild().getId(), new YoutubeAudioManager());
-        }
-        YoutubeAudioManager youtube = audioManagers.get(event.getGuild().getId());
+    public static void handleShuffle(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        AudioChannel connectedChannel = getAudioChannel(event, slash);
+        if (connectedChannel == null) return;
+        YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
+        if (getGuildAudioManager(event, slash, connectedChannel, youtube) == null) return;
         youtube.shuffle(event);
     }
 
-    public static void handleRemove(MessageReceivedEvent event, String toRemove) {
+    public static void handleRemove(MessageReceivedEvent event, SlashCommandInteractionEvent slash, String toRemove) {
         int song = 0;
         try{
             song = Integer.parseInt(toRemove);
         } catch (NumberFormatException ex) {
-            handleResponse(event, "Input a number.");
+            handleResponse(event, slash,"Input a number.");
         }
         if(song < 1 || song > 10) {
-            handleResponse(event, "Input a number between 1-10.");
+            handleResponse(event, slash,"Input a number between 1-10.");
             return;
         }
-        VoiceChannel connectedChannel = event.getMember().getVoiceState().getChannel();
-        if(connectedChannel == null) {
-            handleResponse(event,"You are not in a voice channel!");
-            return;
-        }
-        if(!audioManagers.containsKey(event.getGuild().getId())) {
-            audioManagers.put(event.getGuild().getId(), new YoutubeAudioManager());
-        }
-        YoutubeAudioManager youtube = audioManagers.get(event.getGuild().getId());
-        AudioManager audioManager = event.getGuild().getAudioManager();
-        if(!audioManager.isConnected() && audioManager.getConnectedChannel() != connectedChannel) {
-            handleResponse(event,"The bot is not connected to a voice channel.");
-            return;
-        }
+        AudioChannel connectedChannel = getAudioChannel(event, slash);
+        if (connectedChannel == null) return;
+        YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
+        if (getGuildAudioManager(event, slash, connectedChannel, youtube) == null) return;
         youtube.remove(event, song);
     }
 
-    public static void handleLoop(MessageReceivedEvent event) {
-        VoiceChannel connectedChannel = event.getMember().getVoiceState().getChannel();
-        if(connectedChannel == null) {
-            handleResponse(event,"You are not in a voice channel!");
-            return;
-        }
-        if(!audioManagers.containsKey(event.getGuild().getId())) {
-            audioManagers.put(event.getGuild().getId(), new YoutubeAudioManager());
-        }
-        YoutubeAudioManager youtube = audioManagers.get(event.getGuild().getId());
+    public static void handleLoop(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        AudioChannel connectedChannel = getAudioChannel(event, slash);
+        if (connectedChannel == null) return;
+        YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
         youtube.loop(event);
     }
 }
