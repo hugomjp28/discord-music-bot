@@ -96,7 +96,7 @@ public class CommandHandler {
         // Connects to the channel.
         youtube.clean(event,slash);
         audioManager.closeAudioConnection();
-        handleResponse(event,slash,"Bot disconnected!");
+        handleResponse(event,slash,"**Storms off** I did not appreciate your tone.");
     }
 
     public static void handleSkip(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
@@ -154,10 +154,10 @@ public class CommandHandler {
         try{
             song = Integer.parseInt(toRemove);
         } catch (NumberFormatException ex) {
-            handleResponse(event, slash,"Input a number.");
+            handleResponse(event, slash,"Which number am I supposed to remove???? Your mom????");
         }
         if(song < 1 || song > 10) {
-            handleResponse(event, slash,"Input a number between 1-10.");
+            handleResponse(event, slash,"Do you even know basic math? It has to be between 1 and 10...");
             return;
         }
         AudioChannel connectedChannel = getAudioChannel(event, slash);
@@ -185,7 +185,7 @@ public class CommandHandler {
             if(uriParts[3].compareTo("track") == 0) {
                 spotifyApi.getFirst(uriParts[4], youtube, event, slash,true);
             } else {
-                handleResponse(event,slash,"Can only put one track in first.");
+                handleResponse(event,slash,"ONE AT A TIME!!!!!!");
             }
         } else {
             youtube.first(song, event,slash,false);

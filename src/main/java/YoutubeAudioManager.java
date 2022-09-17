@@ -58,14 +58,14 @@ public class YoutubeAudioManager {
             @Override
             public void noMatches() {
                 System.out.println("no match");
-                CommandHandler.handleResponse(event,slash,"No matches found.");
+                CommandHandler.handleResponse(event,slash,"THE FUCK IS THAT?");
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
                 System.out.println("load failed");
                 if(!isSpotify) {
-                    CommandHandler.handleResponse(event,slash,"Failed to load track.");
+                    CommandHandler.handleResponse(event,slash,"Sorry can't sing that.");
                 }
             }
         });
@@ -87,13 +87,13 @@ public class YoutubeAudioManager {
             @Override
             public void noMatches() {
                 System.out.println("no match");
-                CommandHandler.handleResponse(event,slash,"No matches found.");
+                CommandHandler.handleResponse(event,slash,"THE FUCK IS THAT?");
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
                 System.out.println("load failed");
-                CommandHandler.handleResponse(event,slash,"Failed to load track.");
+                CommandHandler.handleResponse(event,slash,"Sorry can't sing that.");
             }
         });
     }
@@ -114,13 +114,13 @@ public class YoutubeAudioManager {
             @Override
             public void noMatches() {
                 System.out.println("no match");
-                CommandHandler.handleResponse(event,slash,"No matches found.");
+                CommandHandler.handleResponse(event,slash,"THE FUCK IS THAT?");
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
                 System.out.println("load failed");
-                CommandHandler.handleResponse(event,slash,"Failed to load track.");
+                CommandHandler.handleResponse(event,slash,"Sorry can't sing that.");
             }
         });
     }
@@ -134,7 +134,7 @@ public class YoutubeAudioManager {
             CommandHandler.handleResponse(event, slash,
                     "Now playing: " + youtube.getPlayingTrack().getInfo().title);
         } else {
-            CommandHandler.handleResponse(event,slash,"Skipped.");
+            CommandHandler.handleResponse(event,slash,"Thank you, next.");
         }
     }
 
@@ -182,7 +182,7 @@ public class YoutubeAudioManager {
             public void trackLoaded(AudioTrack track) {
                 trackScheduler.first(track, youtube);
                 if(!isSpotify) {
-                    CommandHandler.handleResponse(event, slash,track.getInfo().title + " is now first in queue.");
+                    CommandHandler.handleResponse(event, slash,track.getInfo().title + " is now the main character.");
                 }
             }
 
@@ -192,24 +192,24 @@ public class YoutubeAudioManager {
                     trackScheduler.first(playlist.getTracks().get(0), youtube);
                     if(!isSpotify) {
                         CommandHandler.handleResponse(event,slash,
-                                playlist.getTracks().get(0).getInfo().title + " is now first in queue.");
+                                playlist.getTracks().get(0).getInfo().title + " is now the main character.");
                     }
                 } else {
-                    CommandHandler.handleResponse(event,slash, "Can only put one song in first.");
+                    CommandHandler.handleResponse(event,slash, "ONE AT A TIME!!!!!!");
                 }
             }
 
             @Override
             public void noMatches() {
                 System.out.println("no match");
-                CommandHandler.handleResponse(event,slash,"No matches found.");
+                CommandHandler.handleResponse(event,slash,"THE FUCK IS THAT?");
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
                 System.out.println("load failed");
                 if(!isSpotify) {
-                    CommandHandler.handleResponse(event,slash,"Failed to load track.");
+                    CommandHandler.handleResponse(event,slash,"Sorry can't sing that.");
                 }
             }
         });

@@ -142,31 +142,31 @@ public class TrackScheduler extends AudioEventAdapter {
         if(!queue.isEmpty()) {
             queue.clear();
         }
-        CommandHandler.handleResponse(event,slash,"Cleared Queue.");
+        CommandHandler.handleResponse(event,slash,"I forgor.");
     }
 
     public void pause(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         if(!player.isPaused()){
             player.setPaused(true);
-            CommandHandler.handleResponse(event,slash,"Pausing.");
+            CommandHandler.handleResponse(event,slash,":eye::mouth::eye:");
         } else {
-            CommandHandler.handleResponse(event,slash,"Player is already paused.");
+            CommandHandler.handleResponse(event,slash,"I WAS ALREADY QUIET!!!!");
         }
     }
 
     public void resume(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         if(player.isPaused()){
             player.setPaused(false);
-            CommandHandler.handleResponse(event,slash,"Resuming.");
+            CommandHandler.handleResponse(event,slash,"Anyways... Where was I?");
         } else {
-            CommandHandler.handleResponse(event,slash,"Player is already playing.");
+            CommandHandler.handleResponse(event,slash,"SHUT UP I'M SINGING!");
         }
     }
 
     public void stop(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         clearQueue(event, slash);
         player.stopTrack();
-        CommandHandler.handleResponse(event,slash,"Player stopped.");
+        CommandHandler.handleResponse(event,slash,"**Shuts up aggressively**");
     }
 
     public void shuffle(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
@@ -175,10 +175,10 @@ public class TrackScheduler extends AudioEventAdapter {
             queue.drainTo(aux);
             Collections.shuffle(aux);
             queue.addAll(aux);
-            CommandHandler.handleResponse(event,slash,"Playlist Shuffled.");
+            CommandHandler.handleResponse(event,slash,"OH NO I DROPPED MY AUDIOS!!!!");
             return;
         }
-        CommandHandler.handleResponse(event,slash,"No tracks in queue.");
+        CommandHandler.handleResponse(event,slash,"I have nothing left to give");
     }
 
     public void remove(MessageReceivedEvent event, SlashCommandInteractionEvent slash, int song) {
@@ -187,10 +187,10 @@ public class TrackScheduler extends AudioEventAdapter {
             queue.drainTo(aux);
             AudioTrack removed = aux.remove(song - 1);
             queue.addAll(aux);
-            CommandHandler.handleResponse(event,slash,"Removed \"" + removed.getInfo().title + "\" from queue.");
+            CommandHandler.handleResponse(event,slash,"I forgor \"" + removed.getInfo().title + "\"");
             return;
         }
-        CommandHandler.handleResponse(event,slash,"Queue is empty or invalid number.");
+        CommandHandler.handleResponse(event,slash,"I either have no talent, or no valid number.");
     }
 
     public void setLoop(MessageReceivedEvent event, SlashCommandInteractionEvent slash){

@@ -15,7 +15,8 @@ public class SlashCommandListener extends ListenerAdapter {
                     String song = event.getInteraction().getOption("song").getAsString();
                     CommandHandler.handlePlay(null, event, song);
                 } catch (NullPointerException ex) {
-                    CommandHandler.handleResponse(null, event, "You must tell me what to play!");
+                    CommandHandler.handleResponse(null, event,
+                            "Give song RIGHT NOW or I'm die.");
                 }
 
             } break;
@@ -28,10 +29,11 @@ public class SlashCommandListener extends ListenerAdapter {
                     if(fileExtension.equals("mp3") || fileExtension.equals("wav") || fileExtension.equals("ogg")) {
                         CommandHandler.handleFile(null, event, attachment);
                     } else {
-                        CommandHandler.handleResponse(null, event,"No valid file attached.");
+                        CommandHandler.handleResponse(null, event,
+                                "Girl, I can't read that!");
                     }
                 } catch (NullPointerException ex) {
-                    CommandHandler.handleResponse(null, event,"No file attached.");
+                    CommandHandler.handleResponse(null, event,"Give file RIGHT NOW or I'm die.");
                 }
             } break;
             case("skip") :
@@ -73,7 +75,8 @@ public class SlashCommandListener extends ListenerAdapter {
                     String index = event.getOption("position").getAsString();
                     CommandHandler.handleRemove(null,event,index);
                 }catch (NullPointerException ex) {
-                    CommandHandler.handleResponse(null,event,"Which song to remove?");
+                    CommandHandler.handleResponse(null,event,
+                            "Which number am I supposed to remove???? Your mom????");
                 }
             } break;
             case("loop") : {
@@ -86,7 +89,7 @@ public class SlashCommandListener extends ListenerAdapter {
                     String song = event.getInteraction().getOption("song").getAsString();
                     CommandHandler.handleFirst(null,event,song);
                 } catch (NullPointerException ex) {
-                    CommandHandler.handleResponse(null, event, "You must tell me what to play!");
+                    CommandHandler.handleResponse(null, event, "Give song RIGHT NOW or I'm die.");
                 }
             }
         }

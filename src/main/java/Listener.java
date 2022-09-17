@@ -36,7 +36,7 @@ public class Listener extends ListenerAdapter {
                         if(divided.length >= 2) {
                             CommandHandler.handlePlay(event, null,message.substring(5));
                         } else {
-                            CommandHandler.handleResponse(event, null,"You must tell me what to play!");
+                            CommandHandler.handleResponse(event, null,"Give song RIGHT NOW or I'm die.");
                         }
                         break;
                     case("file") :
@@ -47,10 +47,10 @@ public class Listener extends ListenerAdapter {
                             if(fileExtension.equals("mp3") || fileExtension.equals("wav") || fileExtension.equals("ogg")) {
                                 CommandHandler.handleFile(event, null, attachments.get(0));
                             } else {
-                                CommandHandler.handleResponse(event, null,"No valid file attached.");
+                                CommandHandler.handleResponse(event, null,"Girl, I can't read that!");
                             }
                         } else {
-                            CommandHandler.handleResponse(event, null,"No file attached.");
+                            CommandHandler.handleResponse(event, null,"Give file RIGHT NOW or I'm die.");
                         }
                         break;
                     case("skip") :
@@ -79,7 +79,8 @@ public class Listener extends ListenerAdapter {
                         if(divided.length >= 2) {
                             CommandHandler.handleRemove(event, null, message.substring(7));
                         } else {
-                            CommandHandler.handleResponse(event, null,"Which song to remove?");
+                            CommandHandler.handleResponse(event, null,
+                                    "Which number am I supposed to remove???? Your mom????");
                         }
                         break;
                     case("loop") :
@@ -92,7 +93,7 @@ public class Listener extends ListenerAdapter {
                         if(divided.length >= 2) {
                             CommandHandler.handleFirst(event, null, message.substring(5));
                         } else {
-                            CommandHandler.handleResponse(event, null,"You must tell me what to play!");
+                            CommandHandler.handleResponse(event, null,"Give song RIGHT NOW or I'm die.");
                         }
                         break;
                 }

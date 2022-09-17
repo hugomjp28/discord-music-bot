@@ -97,7 +97,7 @@ public class SpotifyAPI {
             CommandHandler.handleResponse(event,slash,total + " songs added to queue.");
         }catch (Exception e) {
             refreshCredentials();
-            CommandHandler.handleResponse(event,slash,"An error occured, please try again!");
+            CommandHandler.handleResponse(event,slash,"Oops I fucked up, please try again!");
         }
     }
 
