@@ -169,4 +169,49 @@ public class YoutubeAudioManager {
     public void loop(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         trackScheduler.setLoop(event, slash);
     }
+
+    public void first(String identifier, MessageReceivedEvent event, SlashCommandInteractionEvent slash, boolean isSpotify) {
+        String song;
+        if(!identifier.split("/")[0].contains("https")) {
+            song = "ytsearch:" + identifier;
+        } else {
+            song = identifier;
+        }
+        playerManager.loadItem(song, new AudioLoadResultHandler() {
+            @Override
+            public void trackLoaded(AudioTrack track) {
+                trackScheduler.first(track, youtube);
+                if(!isSpotify) {
+                    CommandHandler.handleResponse(event, slash,track.getInfo().title + " is now first in queue.");
+                }
+            }
+
+            @Override
+            public void playlistLoaded(AudioPlaylist playlist) {
+                if(song.contains("ytsearch:")) {
+                    trackScheduler.first(playlist.getTracks().get(0), youtube);
+                    if(!isSpotify) {
+                        CommandHandler.handleResponse(event,slash,
+                                playlist.getTracks().get(0).getInfo().title + " is now first in queue.");
+                    }
+                } else {
+                    CommandHandler.handleResponse(event,slash, "Can only put one song in first.");
+                }
+            }
+
+            @Override
+            public void noMatches() {
+                System.out.println("no match");
+                CommandHandler.handleResponse(event,slash,"No matches found.");
+            }
+
+            @Override
+            public void loadFailed(FriendlyException exception) {
+                System.out.println("load failed");
+                if(!isSpotify) {
+                    CommandHandler.handleResponse(event,slash,"Failed to load track.");
+                }
+            }
+        });
+    }
 }

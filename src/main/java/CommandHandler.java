@@ -173,4 +173,22 @@ public class CommandHandler {
         YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
         youtube.loop(event, slash);
     }
+
+    public static void handleFirst(MessageReceivedEvent event, SlashCommandInteractionEvent slash, String song) {
+        AudioChannel connectedChannel = getAudioChannel(event, slash);
+        if (connectedChannel == null) return;
+        YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
+        if (getGuildAudioManager(event, slash, connectedChannel, youtube) == null) return;
+        if(song.contains("open.spotify.com")) {
+            String[] removeQuery = song.split("\\?");
+            String[] uriParts = removeQuery[0].split("/");
+            if(uriParts[3].compareTo("track") == 0) {
+                spotifyApi.getFirst(uriParts[4], youtube, event, slash,true);
+            } else {
+                handleResponse(event,slash,"Can only put one track in first.");
+            }
+        } else {
+            youtube.first(song, event,slash,false);
+        }
+    }
 }

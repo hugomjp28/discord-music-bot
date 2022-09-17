@@ -75,12 +75,15 @@ public class SpotifyAPI {
             String next = "start";
             int total = 0;
             int i = 0;
+            CompletableFuture<Void> task = CompletableFuture.runAsync(()->{});
             while (next != null) {
                 next = execute.getNext();
                 PlaylistTrack[] playlistTracks = execute.getItems();
-                CompletableFuture.runAsync(()->{
-                    for (PlaylistTrack playlistTrack : playlistTracks) {
-                        if(playlistTrack.getTrack() != null) getTrack(playlistTrack.getTrack().getId(),youtube,event,slash,false);
+                task.thenRunAsync(()->{
+                    for (PlaylistTrack playlistTrack: playlistTracks) {
+                        if(playlistTrack.getTrack() != null) {
+                            getTrack(playlistTrack.getTrack().getId(), youtube, event, slash, false);
+                        }
                     }
                 });
                 total += playlistTracks.length;
@@ -116,6 +119,25 @@ public class SpotifyAPI {
         } catch (Exception e) {
             refreshCredentials();
             getAlbum(uri,youtube,event,slash);
+        }
+    }
+
+    public void getFirst(String uri, YoutubeAudioManager youtube, MessageReceivedEvent event,
+                         SlashCommandInteractionEvent slash, boolean print) {
+        GetTrackRequest getTrackRequest = spotifyApi.getTrack(uri).build();
+        try{
+            Track track = getTrackRequest.execute();
+            StringBuilder toSearch = new StringBuilder(track.getName());
+            for(ArtistSimplified artist : track.getArtists()) {
+                toSearch.append(" ").append(artist.getName());
+            }
+            youtube.first(toSearch.toString(),event, slash,true);
+            if(print) {
+                CommandHandler.handleResponse(event,slash,track.getName() + " added to queue.");
+            }
+        } catch (Exception e) {
+            refreshCredentials();
+            getTrack(uri,youtube,event,slash,print);
         }
     }
 }

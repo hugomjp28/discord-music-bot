@@ -80,6 +80,15 @@ public class SlashCommandListener extends ListenerAdapter {
                 event.deferReply().queue();
                 CommandHandler.handleLoop(null,event);
             } break;
+            case("first") : {
+                event.deferReply().queue();
+                try {
+                    String song = event.getInteraction().getOption("song").getAsString();
+                    CommandHandler.handleFirst(null,event,song);
+                } catch (NullPointerException ex) {
+                    CommandHandler.handleResponse(null, event, "You must tell me what to play!");
+                }
+            }
         }
     }
 }

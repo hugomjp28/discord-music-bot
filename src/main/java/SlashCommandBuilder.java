@@ -31,7 +31,10 @@ public class SlashCommandBuilder {
                 Commands.slash("loop","Bot enters loop mode, " +
                         "repeating the first track until it turned off by calling this command again."),
                 Commands.slash("next", "Same as the \"skip\" command. " +
-                        "Skips the current playing song and plays the next one, if any.")
+                        "Skips the current playing song and plays the next one, if any."),
+                Commands.slash("first","Puts a song in the front of the queue.")
+                        .addOption(OptionType.STRING, "song",
+                                "The song to put in the front of the queue.")
         ).queue();
     }
 }

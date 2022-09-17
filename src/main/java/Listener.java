@@ -88,6 +88,13 @@ public class Listener extends ListenerAdapter {
                     case("dc") :
                         CommandHandler.handleDisconnect(event, null);
                         break;
+                    case("first") :
+                        if(divided.length >= 2) {
+                            CommandHandler.handleFirst(event, null, message.substring(5));
+                        } else {
+                            CommandHandler.handleResponse(event, null,"You must tell me what to play!");
+                        }
+                        break;
                 }
             }
         }

@@ -197,4 +197,13 @@ public class TrackScheduler extends AudioEventAdapter {
         loop = !loop;
         CommandHandler.handleResponse(event,slash,"Looping is " + (loop ? "on" : "off"));
     }
+
+    public void first(AudioTrack track, AudioPlayer youtube) {
+        if (!player.startTrack(track, true)) {
+            LinkedList<AudioTrack> aux = new LinkedList<>();
+            queue.drainTo(aux);
+            aux.addFirst(track);
+            queue.addAll(aux);
+        }
+    }
 }
