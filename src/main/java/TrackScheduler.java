@@ -148,7 +148,7 @@ public class TrackScheduler extends AudioEventAdapter {
     public void pause(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
         if(!player.isPaused()){
             player.setPaused(true);
-            CommandHandler.handleResponse(event,slash,":eye::mouth::eye:");
+            CommandHandler.handleResponse(event,slash,":eye::lips::eye:");
         } else {
             CommandHandler.handleResponse(event,slash,"I WAS ALREADY QUIET!!!!");
         }
