@@ -133,11 +133,11 @@ public class SpotifyAPI {
             }
             youtube.first(toSearch.toString(),event, slash,true);
             if(print) {
-                CommandHandler.handleResponse(event,slash,track.getName() + " added to queue.");
+                CommandHandler.handleResponse(event,slash,track.getName() + " is now the main character.");
             }
         } catch (Exception e) {
             refreshCredentials();
-            getTrack(uri,youtube,event,slash,print);
+            getFirst(uri,youtube,event,slash,print);
         }
     }
 }
