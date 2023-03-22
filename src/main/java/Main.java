@@ -3,6 +3,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
@@ -20,7 +21,7 @@ public class Main {
         builder.setCompression(Compression.NONE);
         // Set activity (like "playing Something")
         builder.setActivity(Activity.listening("Lily Santos"));
-
+        builder.enableIntents(GatewayIntent.MESSAGE_CONTENT);
         //Listeners
         builder.addEventListeners(new Listener('!'), new SlashCommandListener());
         JDA build = builder.build();
