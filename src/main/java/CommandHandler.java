@@ -1,5 +1,5 @@
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
@@ -11,7 +11,6 @@ import java.util.Map;
 public class CommandHandler {
     private static final SpotifyAPI spotifyApi = new SpotifyAPI();
     private static final Map<String,YoutubeAudioManager> audioManagers = new HashMap<>();
-
     private static AudioManager getGuildAudioManager(MessageReceivedEvent event, SlashCommandInteractionEvent slash, AudioChannel connectedChannel, YoutubeAudioManager youtube) {
         AudioManager audioManager = event != null ?
                 event.getGuild().getAudioManager() : slash.getGuild().getAudioManager();
