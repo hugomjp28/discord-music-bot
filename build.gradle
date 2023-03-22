@@ -22,7 +22,7 @@ repositories {
 dependencies {
     implementation("net.dv8tion:JDA:5.0.0-beta.6")
     implementation('com.github.walkyst:lavaplayer-fork:1.4.0')
-    implementation("ch.qos.logback:logback-classic:1.2.8")
+    //implementation("ch.qos.logback:logback-classic:1.2.8")
     implementation 'se.michaelthelin.spotify:spotify-web-api-java:6.5.4'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
