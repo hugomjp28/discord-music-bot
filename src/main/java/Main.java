@@ -23,7 +23,7 @@ public class Main {
         builder.setActivity(Activity.listening("Lily Santos"));
         builder.enableIntents(GatewayIntent.MESSAGE_CONTENT);
         //Listeners
-        builder.addEventListeners(new Listener('!'), new SlashCommandListener());
+        builder.addEventListeners(new Listener(args[1].charAt(0)), new SlashCommandListener());
         JDA build = builder.build();
         SlashCommandBuilder.buildCommands(build);
     }
