@@ -44,7 +44,7 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason.mayStartNext && endReason != AudioTrackEndReason.LOAD_FAILED) {
-            if (loop) {
+            if (loop & endReason == AudioTrackEndReason.FINISHED) {
                 player.startTrack(track.makeClone(), false);
             } else if (!queue.isEmpty()) {
                 player.startTrack(queue.poll(), false);
@@ -53,7 +53,7 @@ public class TrackScheduler extends AudioEventAdapter {
             }
         } else if(endReason == AudioTrackEndReason.LOAD_FAILED) {
             //do nothing
-        } else {
+        } else if(endReason != AudioTrackEndReason.REPLACED){
             player.startTrack(null, false);
         }
 
