@@ -49,12 +49,12 @@ public class TrackScheduler extends AudioEventAdapter {
             } else if (!queue.isEmpty()) {
                 player.startTrack(queue.poll(), false);
             } else {
-                player.startTrack(null, true);
+                player.startTrack(null, false);
             }
         } else if(endReason == AudioTrackEndReason.LOAD_FAILED) {
             //do nothing
         } else {
-            player.startTrack(null, true);
+            player.startTrack(null, false);
         }
 
         // endReason == FINISHED: A track finished or died by an exception (mayStartNext = true).
