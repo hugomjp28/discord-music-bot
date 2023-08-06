@@ -43,6 +43,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+        System.out.println("Track end reason: " + endReason);
         if (endReason.mayStartNext && endReason != AudioTrackEndReason.LOAD_FAILED) {
             if (loop & endReason == AudioTrackEndReason.FINISHED) {
                 player.startTrack(track.makeClone(), false);
@@ -68,6 +69,8 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         //reloads track
+        System.out.println("Track exception: " + exception.toString());
+        System.out.println("Exception message: " + exception.getMessage());
         playerManager.loadItem(track.getIdentifier(), new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
@@ -94,7 +97,7 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
         // Audio track has been unable to provide us any audio, might want to just start a new track
-        System.out.println("stuck");
+        System.out.println("Track stuck");
         nextTrack();
     }
 
@@ -105,6 +108,7 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public boolean nextTrack() {
+        System.out.println("Next track");
         // Start the next track, regardless of if something is already playing or not. In case queue was empty, we are
         // giving null to startTrack, which is a valid argument and will simply stop the player.
         AudioTrack poll = queue.poll();
