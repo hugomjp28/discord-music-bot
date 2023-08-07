@@ -17,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class TrackScheduler extends AudioEventAdapter {
     private final BlockingQueue<AudioTrack> queue;
     private boolean loop = false;
-    private final AudioPlayer player;
+    private AudioPlayer player;
     private final AudioPlayerManager playerManager;
 
     public TrackScheduler(AudioPlayer player, AudioPlayerManager playerManager) {
@@ -54,7 +54,6 @@ public class TrackScheduler extends AudioEventAdapter {
             }
         } else if(endReason == AudioTrackEndReason.LOAD_FAILED) {
             //do nothing
-            player.startTrack(queue.poll(), false);
         } else if(endReason != AudioTrackEndReason.REPLACED){
             player.startTrack(null, false);
         }
@@ -72,6 +71,10 @@ public class TrackScheduler extends AudioEventAdapter {
         //reloads track
         System.out.println("Track exception: " + exception.toString());
         System.out.println("Exception message: " + exception.getMessage());
+        exception.printStackTrace(System.out);
+        player.destroy();
+        this.player = playerManager.createPlayer();
+        //player.startTrack(track,false);
         /*playerManager.loadItem(track.getIdentifier(), new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
