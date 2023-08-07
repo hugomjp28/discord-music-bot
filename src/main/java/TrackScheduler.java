@@ -53,7 +53,7 @@ public class TrackScheduler extends AudioEventAdapter {
                 player.startTrack(null, false);
             }
         } else if(endReason == AudioTrackEndReason.LOAD_FAILED) {
-            //do nothing
+            player.startTrack(queue.poll(), false);
         } else if(endReason != AudioTrackEndReason.REPLACED){
             player.startTrack(null, false);
         }
