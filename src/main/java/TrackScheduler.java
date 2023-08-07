@@ -53,6 +53,7 @@ public class TrackScheduler extends AudioEventAdapter {
                 player.startTrack(null, false);
             }
         } else if(endReason == AudioTrackEndReason.LOAD_FAILED) {
+            //do nothing
             player.startTrack(queue.poll(), false);
         } else if(endReason != AudioTrackEndReason.REPLACED){
             player.startTrack(null, false);
@@ -71,7 +72,7 @@ public class TrackScheduler extends AudioEventAdapter {
         //reloads track
         System.out.println("Track exception: " + exception.toString());
         System.out.println("Exception message: " + exception.getMessage());
-        playerManager.loadItem(track.getIdentifier(), new AudioLoadResultHandler() {
+        /*playerManager.loadItem(track.getIdentifier(), new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
                 player.startTrack(audioTrack,false);
@@ -91,7 +92,7 @@ public class TrackScheduler extends AudioEventAdapter {
             public void loadFailed(FriendlyException e) {
                 //do nothing
             }
-        });
+        });*/
     }
 
     @Override
