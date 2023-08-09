@@ -72,7 +72,7 @@ public class TrackScheduler extends AudioEventAdapter {
         System.out.println("Track exception: " + exception.toString());
         System.out.println("Exception message: " + exception.getMessage());
         exception.printStackTrace(System.out);
-        /*playerManager.loadItem(track.getIdentifier(), new AudioLoadResultHandler() {
+        playerManager.loadItem(track.getIdentifier(), new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
                 player.startTrack(audioTrack,false);
@@ -92,7 +92,7 @@ public class TrackScheduler extends AudioEventAdapter {
             public void loadFailed(FriendlyException e) {
                 //do nothing
             }
-        });*/
+        });
     }
 
     @Override
