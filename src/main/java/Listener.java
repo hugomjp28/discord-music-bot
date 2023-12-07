@@ -95,6 +95,10 @@ public class Listener extends ListenerAdapter {
                             CommandHandler.handleResponse(event, null,"You must tell me what to play!");
                         }
                         break;
+                    case("undo") :
+                    case("revert") :
+                        CommandHandler.handleUndo(event, null);
+                        break;
                 }
             }
         }

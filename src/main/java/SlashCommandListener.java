@@ -89,6 +89,11 @@ public class SlashCommandListener extends ListenerAdapter {
                     CommandHandler.handleResponse(null, event, "You must tell me what to play!");
                 }
             }
+            case("undo") :
+            case("revert") : {
+                event.deferReply().queue();
+                CommandHandler.handleUndo(null,event);
+            } break;
         }
     }
 }

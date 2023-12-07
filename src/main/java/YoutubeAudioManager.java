@@ -214,4 +214,8 @@ public class YoutubeAudioManager {
             }
         });
     }
+
+    public void undo(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        trackScheduler.undo(event, slash);
+    }
 }
