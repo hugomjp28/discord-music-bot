@@ -211,4 +211,16 @@ public class TrackScheduler extends AudioEventAdapter {
             queue.addAll(aux);
         }
     }
+
+    public void undo(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        if(!queue.isEmpty()) {
+            LinkedList<AudioTrack> aux = new LinkedList<>();
+            queue.drainTo(aux);
+            AudioTrack removed = aux.remove(aux.size() - 1);
+            queue.addAll(aux);
+            CommandHandler.handleResponse(event,slash,"I forgor \"" + removed.getInfo().title + "\"");
+            return;
+        }
+        CommandHandler.handleResponse(event,slash,"There's no song bestie.");
+    }
 }

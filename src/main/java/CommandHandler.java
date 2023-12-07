@@ -190,4 +190,11 @@ public class CommandHandler {
             youtube.first(song, event,slash,false);
         }
     }
+
+    public static void handleUndo(MessageReceivedEvent event, SlashCommandInteractionEvent slash) {
+        AudioChannel connectedChannel = getAudioChannel(event, slash);
+        if (connectedChannel == null) return;
+        YoutubeAudioManager youtube = getYoutubeAudioManager(event, slash);
+        youtube.undo(event, slash);
+    }
 }

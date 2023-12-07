@@ -91,7 +91,12 @@ public class SlashCommandListener extends ListenerAdapter {
                 } catch (NullPointerException ex) {
                     CommandHandler.handleResponse(null, event, "Give song RIGHT NOW or I'm die.");
                 }
-            }
+            } break;
+            case("undo") : 
+            case("revert") : {
+                event.deferReply().queue();
+                CommandHandler.handleUndo(null,event);
+            } break;
         }
     }
 }

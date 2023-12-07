@@ -34,7 +34,9 @@ public class SlashCommandBuilder {
                         "Skips the current playing song and plays the next one, if any."),
                 Commands.slash("first","Puts a song in the front of the queue.")
                         .addOption(OptionType.STRING, "song",
-                                "The song to put in the front of the queue.")
+                                "The song to put in the front of the queue."),
+                Commands.slash("undo","Deletes the last song added to the queue."),
+                Commands.slash("revert","Deletes the last song added to the queue.")
         ).queue();
     }
 }
