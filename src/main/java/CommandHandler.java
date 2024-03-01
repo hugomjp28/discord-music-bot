@@ -19,8 +19,22 @@ public class CommandHandler {
             handleResponse(event, slash,"The bot is already connected to a voice channel.");
             return null;
         } else if(!audioManager.isConnected()){
-            audioManager.openAudioConnection(connectedChannel);
-            audioManager.setSendingHandler(new AudioPlayerSendHandler(youtube.youtube));
+            String command;
+            if(event != null) {
+                command = event.getMessage()
+                        .getContentRaw()
+                        .substring(1)
+                        .split(" ")[0];
+            } else {
+                command = slash.getName().toLowerCase();
+            }
+            switch(command) {
+                case "play", "file", "first" :
+                    audioManager.openAudioConnection(connectedChannel);
+                    audioManager.setSendingHandler(new AudioPlayerSendHandler(youtube.youtube));
+                    break;
+                default : return null;
+            }
         }
         return audioManager;
     }

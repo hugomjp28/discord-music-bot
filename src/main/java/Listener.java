@@ -12,9 +12,9 @@ import java.util.Locale;
 import java.util.Map;
 
 public class Listener extends ListenerAdapter {
-    private char prefix;
+    private final char PREFIX;
     public Listener(char prefix) {
-        this.prefix = prefix;
+        this.PREFIX = prefix;
     }
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
@@ -27,7 +27,7 @@ public class Listener extends ListenerAdapter {
             message = message.substring(1);
             String[] divided = message.split(" ");
 
-            if(messagePrefix == prefix) {
+            if(messagePrefix == PREFIX) {
                 switch(divided[0].toLowerCase()){
                     case("ping") :
                         CommandHandler.handleResponse(event,null,"PONG!");
@@ -77,7 +77,7 @@ public class Listener extends ListenerAdapter {
                         break;
                     case("remove") :
                         if(divided.length >= 2) {
-                            CommandHandler.handleRemove(event, null, message.substring(7));
+                            CommandHandler.handleRemove(event, null, divided[1]);
                         } else {
                             CommandHandler.handleResponse(event, null,"Which song to remove?");
                         }
@@ -90,7 +90,7 @@ public class Listener extends ListenerAdapter {
                         break;
                     case("first") :
                         if(divided.length >= 2) {
-                            CommandHandler.handleFirst(event, null, message.substring(5));
+                            CommandHandler.handleFirst(event, null, divided[1]);
                         } else {
                             CommandHandler.handleResponse(event, null,"You must tell me what to play!");
                         }
