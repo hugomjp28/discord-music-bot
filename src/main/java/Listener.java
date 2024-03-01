@@ -34,10 +34,10 @@ public class Listener extends ListenerAdapter {
                     case("file") :
                         List<Message.Attachment> attachments = event.getMessage().getAttachments();
                         if(!attachments.isEmpty()) {
-                            String fileExtension = attachments.getFirst().getFileExtension();
+                            String fileExtension = attachments.get(0).getFileExtension();
                             assert fileExtension != null;
                             if(fileExtension.equals("mp3") || fileExtension.equals("wav") || fileExtension.equals("ogg")) {
-                                CommandHandler.handleFile(event, null, attachments.getFirst());
+                                CommandHandler.handleFile(event, null, attachments.get(0));
                             } else {
                                 CommandHandler.handleResponse(event, null,"Girl, I can't read that!");
                             }
