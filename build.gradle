@@ -17,11 +17,26 @@ repositories {
     maven {
         url 'https://jitpack.io'
     }
+    maven {
+        url "https://maven.lavalink.dev/releases"
+    }
+}
+
+tasks.withType(Tar) {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.withType(Zip) {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 dependencies {
     implementation("net.dv8tion:JDA:5.0.0-beta.6")
-    implementation("com.github.hugomjp28:lavaplayer-fork:3629df2")
+    //implementation ('dev.arbjerg:lavaplayer:2.1.1')
+    //implementation ('com.github.Nansess.lavaplayer-test:lavaplayer:19e815bd83')
+    implementation ('com.github.ShimoLen:lavaplayer:1bb73fb51d')
+    //implementation ("dev.lavalink.youtube:v2:1.1.0")
+    //implementation("com.github.hugomjp28:lavaplayer-fork:047006a")
     //implementation("ch.qos.logback:logback-classic:1.2.8")
     implementation 'se.michaelthelin.spotify:spotify-web-api-java:6.5.4'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'

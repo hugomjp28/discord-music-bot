@@ -27,12 +27,11 @@ public class CommandHandler {
             } else {
                 command = slash.getName().toLowerCase();
             }
-            switch(command) {
-                case "play", "file", "first" :
-                    audioManager.openAudioConnection(connectedChannel);
-                    audioManager.setSendingHandler(new AudioPlayerSendHandler(youtube.youtube));
-                    break;
-                default : return null;
+            if (command.equals("play") | command.equals("file") | command.equals("first")) {
+                audioManager.openAudioConnection(connectedChannel);
+                audioManager.setSendingHandler(new AudioPlayerSendHandler(youtube.youtube));
+            } else {
+                return null;
             }
         }
         return audioManager;
