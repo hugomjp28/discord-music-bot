@@ -5,6 +5,9 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.*;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
+import dev.lavalink.youtube.clients.*;
+import dev.lavalink.youtube.clients.skeleton.Client;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -16,7 +19,11 @@ public class YoutubeAudioManager {
 
     public YoutubeAudioManager() {
         playerManager = new DefaultAudioPlayerManager();
-        AudioSourceManagers.registerRemoteSources(playerManager);
+        AudioSourceManagers.registerRemoteSources(playerManager,
+                com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager.class);
+        YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(true, true, true);
+
+        playerManager.registerSourceManager(ytSourceManager);
         youtube = playerManager.createPlayer();
         trackScheduler = new TrackScheduler(youtube,playerManager);
         youtube.addListener(trackScheduler);
@@ -27,7 +34,15 @@ public class YoutubeAudioManager {
         if(!identifier.split("/")[0].contains("https")) {
             song = "ytsearch:" + identifier;
         } else {
-            song = identifier;
+            if (identifier.contains("watch?v=")){
+                if (identifier.split("=")[1].contains("list")){
+                    song = identifier.split("&")[1].split("=")[1];
+                } else {
+                    song = identifier.split("=")[1];
+                }
+            } else {
+                song = identifier.split("/")[3];
+            }
         }
         playerManager.loadItem(song, new AudioLoadResultHandler() {
             @Override
