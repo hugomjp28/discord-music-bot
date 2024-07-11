@@ -190,7 +190,15 @@ public class YoutubeAudioManager {
         if(!identifier.split("/")[0].contains("https")) {
             song = "ytsearch:" + identifier;
         } else {
-            song = identifier;
+            if (identifier.contains("watch?v=")){
+                if (identifier.split("=")[1].contains("list")){
+                    song = identifier.split("&")[1].split("=")[1];
+                } else {
+                    song = identifier.split("=")[1];
+                }
+            } else {
+                song = identifier.split("/")[3];
+            }
         }
         playerManager.loadItem(song, new AudioLoadResultHandler() {
             @Override
