@@ -31,10 +31,8 @@ public class YoutubeAudioManager {
         YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(true, true, true);
 
         ArrayList<IpBlock> ipBlocks = new ArrayList<>();
-        //Ipv4Block test = new Ipv4Block("161.35.69.0/24");
-        Ipv4Block test2 = new Ipv4Block("192.168.1.0/24");
-        Ipv6Block ipv6Block = new Ipv6Block("2a03:b0c0:3:d0:0:0:10de:4000/64");
-        //ipBlocks.add(test);
+        Ipv6Block ipv6Block = new Ipv6Block("2a03:b0c0:3:d0:0:0:0:1/64");
+        System.out.println(ipv6Block.getRandomAddress());
         ipBlocks.add(ipv6Block);
         RotatingIpRoutePlanner routePlanner = new RotatingIpRoutePlanner(ipBlocks);
         YoutubeIpRotatorSetup rotator = new YoutubeIpRotatorSetup(routePlanner);
