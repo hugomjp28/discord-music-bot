@@ -31,14 +31,14 @@ public class YoutubeAudioManager {
         YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(true, true, true);
 
         ArrayList<IpBlock> ipBlocks = new ArrayList<>();
-        Ipv6Block ipv6Block = new Ipv6Block("2a03:b0c0:3:d0:0:0:0:1/64");
+        Ipv6Block ipv6Block = new Ipv6Block("2a03:b0c0:3:d0::10de:4001/64");
         System.out.println(ipv6Block.getRandomAddress());
         ipBlocks.add(ipv6Block);
         RotatingIpRoutePlanner routePlanner = new RotatingIpRoutePlanner(ipBlocks);
         YoutubeIpRotatorSetup rotator = new YoutubeIpRotatorSetup(routePlanner);
         rotator.forConfiguration(ytSourceManager.getHttpInterfaceManager(), true)
                 .withMainDelegateFilter(null) // This is important, otherwise you may get NullPointerExceptions.
-                .withRetryLimit(1000)
+                .withRetryLimit(Integer.MAX_VALUE)
                 .setup();
         playerManager.registerSourceManager(ytSourceManager);
         youtube = playerManager.createPlayer();
