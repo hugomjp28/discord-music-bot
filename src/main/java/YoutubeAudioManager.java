@@ -5,12 +5,18 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.*;
+import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup;
+import com.sedmelluq.lava.extensions.youtuberotator.planner.RotatingIpRoutePlanner;
+import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.IpBlock;
+import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.Ipv4Block;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import dev.lavalink.youtube.clients.*;
 import dev.lavalink.youtube.clients.skeleton.Client;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
+import java.util.ArrayList;
 
 public class YoutubeAudioManager {
     AudioPlayerManager playerManager;
@@ -21,8 +27,16 @@ public class YoutubeAudioManager {
         playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager,
                 com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager.class);
-        YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(true, true, true);
+        YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(true, true, true, new Client[] { new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidTestsuiteWithThumbnail() });
 
+        ArrayList<IpBlock> ipBlocks = new ArrayList<>();
+        Ipv4Block block = new Ipv4Block("161.35.69.0/24");
+        ipBlocks.add(block);
+        RotatingIpRoutePlanner routePlanner = new RotatingIpRoutePlanner(ipBlocks);
+        YoutubeIpRotatorSetup rotator = new YoutubeIpRotatorSetup(routePlanner);
+        rotator.forConfiguration(ytSourceManager.getHttpInterfaceManager(), true)
+                .withMainDelegateFilter(null) // This is important, otherwise you may get NullPointerExceptions.
+                .setup();
         playerManager.registerSourceManager(ytSourceManager);
         youtube = playerManager.createPlayer();
         trackScheduler = new TrackScheduler(youtube,playerManager);
