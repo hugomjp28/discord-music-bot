@@ -38,7 +38,7 @@ public class YoutubeAudioManager {
         YoutubeIpRotatorSetup rotator = new YoutubeIpRotatorSetup(routePlanner);
         rotator.forConfiguration(ytSourceManager.getHttpInterfaceManager(), true)
                 .withMainDelegateFilter(null) // This is important, otherwise you may get NullPointerExceptions.
-                .withRetryLimit(Integer.MAX_VALUE)
+                .withRetryLimit(1000000)
                 .setup();
         playerManager.registerSourceManager(ytSourceManager);
         youtube = playerManager.createPlayer();
