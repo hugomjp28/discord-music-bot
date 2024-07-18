@@ -93,6 +93,7 @@ public class YoutubeAudioManager {
             @Override
             public void loadFailed(FriendlyException exception) {
                 System.out.println("load failed");
+                exception.printStackTrace();
                 if(!isSpotify) {
                     CommandHandler.handleResponse(event,slash,"Sorry can't sing that.");
                 }
