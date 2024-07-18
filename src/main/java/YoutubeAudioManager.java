@@ -27,11 +27,13 @@ public class YoutubeAudioManager {
         playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager,
                 com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager.class);
-        YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(true, true, true, new Client[] { new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidTestsuiteWithThumbnail() });
+        YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(true, true, true);
 
         ArrayList<IpBlock> ipBlocks = new ArrayList<>();
         Ipv4Block test = new Ipv4Block("161.35.69.0/24");
+        Ipv4Block test2 = new Ipv4Block("192.168.1.0/24");
         ipBlocks.add(test);
+        ipBlocks.add(test2);
         RotatingIpRoutePlanner routePlanner = new RotatingIpRoutePlanner(ipBlocks);
         YoutubeIpRotatorSetup rotator = new YoutubeIpRotatorSetup(routePlanner);
         rotator.forConfiguration(ytSourceManager.getHttpInterfaceManager(), true)
