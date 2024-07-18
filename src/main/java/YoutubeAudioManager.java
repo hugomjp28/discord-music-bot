@@ -9,6 +9,7 @@ import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup;
 import com.sedmelluq.lava.extensions.youtuberotator.planner.RotatingIpRoutePlanner;
 import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.IpBlock;
 import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.Ipv4Block;
+import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.Ipv6Block;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import dev.lavalink.youtube.clients.*;
 import dev.lavalink.youtube.clients.skeleton.Client;
@@ -30,10 +31,11 @@ public class YoutubeAudioManager {
         YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(true, true, true);
 
         ArrayList<IpBlock> ipBlocks = new ArrayList<>();
-        Ipv4Block test = new Ipv4Block("161.35.69.0/24");
+        //Ipv4Block test = new Ipv4Block("161.35.69.0/24");
         Ipv4Block test2 = new Ipv4Block("192.168.1.0/24");
-        ipBlocks.add(test);
-        ipBlocks.add(test2);
+        Ipv6Block ipv6Block = new Ipv6Block("2a03:b0c0:3:d0::10de:4001/120");
+        //ipBlocks.add(test);
+        ipBlocks.add(ipv6Block);
         RotatingIpRoutePlanner routePlanner = new RotatingIpRoutePlanner(ipBlocks);
         YoutubeIpRotatorSetup rotator = new YoutubeIpRotatorSetup(routePlanner);
         rotator.forConfiguration(ytSourceManager.getHttpInterfaceManager(), true)
