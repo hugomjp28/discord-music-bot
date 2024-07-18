@@ -27,9 +27,9 @@ public class YoutubeAudioManager {
         playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager,
                 com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager.class);
-        YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(true, true, true, new Client[] { new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidTestsuiteWithThumbnail() });
+        YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(true, true, true, new Client[] { new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidTestsuiteWithThumbnail(), new TvHtml5Embedded() });
 
-        ArrayList<IpBlock> ipBlocks = new ArrayList<>();
+/*        ArrayList<IpBlock> ipBlocks = new ArrayList<>();
         Ipv4Block test = new Ipv4Block("161.35.69.0/24");
         ipBlocks.add(test);
         RotatingIpRoutePlanner routePlanner = new RotatingIpRoutePlanner(ipBlocks);
@@ -37,7 +37,7 @@ public class YoutubeAudioManager {
         rotator.forConfiguration(ytSourceManager.getHttpInterfaceManager(), true)
                 .withMainDelegateFilter(null) // This is important, otherwise you may get NullPointerExceptions.
                 .withRetryLimit(255)
-                .setup();
+                .setup();*/
         playerManager.registerSourceManager(ytSourceManager);
         youtube = playerManager.createPlayer();
         trackScheduler = new TrackScheduler(youtube,playerManager);
