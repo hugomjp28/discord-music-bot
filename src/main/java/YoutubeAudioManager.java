@@ -33,14 +33,14 @@ public class YoutubeAudioManager {
         ArrayList<IpBlock> ipBlocks = new ArrayList<>();
         //Ipv4Block test = new Ipv4Block("161.35.69.0/24");
         Ipv4Block test2 = new Ipv4Block("192.168.1.0/24");
-        Ipv6Block ipv6Block = new Ipv6Block("2a03:b0c0:3:d0:0:0:10de:4000/120");
+        Ipv6Block ipv6Block = new Ipv6Block("2a03:b0c0:3:d0:0:0:10de:4000/124");
         //ipBlocks.add(test);
         ipBlocks.add(ipv6Block);
         RotatingIpRoutePlanner routePlanner = new RotatingIpRoutePlanner(ipBlocks);
         YoutubeIpRotatorSetup rotator = new YoutubeIpRotatorSetup(routePlanner);
         rotator.forConfiguration(ytSourceManager.getHttpInterfaceManager(), true)
                 .withMainDelegateFilter(null) // This is important, otherwise you may get NullPointerExceptions.
-                .withRetryLimit(255)
+                .withRetryLimit(1000)
                 .setup();
         playerManager.registerSourceManager(ytSourceManager);
         youtube = playerManager.createPlayer();
