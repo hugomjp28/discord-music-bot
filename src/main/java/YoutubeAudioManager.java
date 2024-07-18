@@ -6,7 +6,6 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.*;
 import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup;
-import com.sedmelluq.lava.extensions.youtuberotator.planner.BalancingIpRoutePlanner;
 import com.sedmelluq.lava.extensions.youtuberotator.planner.RotatingIpRoutePlanner;
 import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.IpBlock;
 import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.Ipv4Block;
@@ -38,9 +37,7 @@ public class YoutubeAudioManager {
         //ipBlocks.add(test);
         ipBlocks.add(ipv6Block);
         RotatingIpRoutePlanner routePlanner = new RotatingIpRoutePlanner(ipBlocks);
-        BalancingIpRoutePlanner balancingIpRoutePlanner = new BalancingIpRoutePlanner(ipBlocks);
-
-        YoutubeIpRotatorSetup rotator = new YoutubeIpRotatorSetup(balancingIpRoutePlanner);
+        YoutubeIpRotatorSetup rotator = new YoutubeIpRotatorSetup(routePlanner);
         rotator.forConfiguration(ytSourceManager.getHttpInterfaceManager(), true)
                 .withMainDelegateFilter(null) // This is important, otherwise you may get NullPointerExceptions.
                 .withRetryLimit(255)
