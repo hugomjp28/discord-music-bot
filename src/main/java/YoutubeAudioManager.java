@@ -31,14 +31,14 @@ public class YoutubeAudioManager {
                 com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager.class);
         YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(true, true, true, new Client[] { new TvHtml5Embedded(), new WebWithThumbnail(), new MusicWithThumbnail(), new AndroidTestsuiteWithThumbnail() });
 
-        ArrayList<IpBlock> ipBlocks = new ArrayList<>();
-        ipBlocks.add(new Ipv6Block("2a03:b0c0:3:d0::/64"));
-        NanoIpRoutePlanner routePlanner = new NanoIpRoutePlanner(ipBlocks,true);
-        YoutubeIpRotatorSetup rotator = new YoutubeIpRotatorSetup(routePlanner);
-        rotator.forConfiguration(ytSourceManager.getHttpInterfaceManager(), false)
-                .withMainDelegateFilter(null) // This is important, otherwise you may get NullPointerExceptions.
-                .withRetryLimit(255)
-                .setup();
+//        ArrayList<IpBlock> ipBlocks = new ArrayList<>();
+//        ipBlocks.add(new Ipv6Block("2a03:b0c0:3:d0::/64"));
+//        NanoIpRoutePlanner routePlanner = new NanoIpRoutePlanner(ipBlocks,true);
+//        YoutubeIpRotatorSetup rotator = new YoutubeIpRotatorSetup(routePlanner);
+//        rotator.forConfiguration(ytSourceManager.getHttpInterfaceManager(), false)
+//                .withMainDelegateFilter(null) // This is important, otherwise you may get NullPointerExceptions.
+//                .withRetryLimit(255)
+//                .setup();
         playerManager.registerSourceManager(ytSourceManager);
         youtube = playerManager.createPlayer();
         trackScheduler = new TrackScheduler(youtube,playerManager);
