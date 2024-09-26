@@ -33,7 +33,7 @@ tasks.withType(Zip) {
 dependencies {
     implementation("net.dv8tion:JDA:5.0.0-beta.6")
     implementation ('dev.arbjerg:lavaplayer:2.2.1')
-    implementation("dev.lavalink.youtube:v2:1.5.1")
+    implementation("dev.lavalink.youtube:v2:1.8.3")
     implementation("dev.arbjerg:lavaplayer-ext-youtube-rotator:2.2.1")
     //implementation ('com.github.Nansess.lavaplayer-test:lavaplayer:19e815bd83')
     //implementation ('com.github.ShimoLen:lavaplayer:1bb73fb51d')
